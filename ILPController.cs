@@ -26,7 +26,7 @@ namespace TourlistWeb.Controllers
     [SessionTimeout]
     public class ILPController : TourlistController
     {
-        
+
         TourlistBusinessLayer.BLL.IlpBLL ilpBLL = new TourlistBusinessLayer.BLL.IlpBLL();
         List<SelectListItem> shareholders = new List<SelectListItem>();
         TourlistWebAPI.ClassLib.CoreOrganizationHelper coreOrgHelper = new TourlistWebAPI.ClassLib.CoreOrganizationHelper();
@@ -43,7 +43,7 @@ namespace TourlistWeb.Controllers
             if (ViewBag.TukarStatusExist != null && ViewBag.TukarStatusExist == "Deraf" || ViewBag.TukarStatusExist.Contains("Menunggu") || ViewBag.TukarStatusExist.Contains("Dihantar")) return RedirectToAction("TukarStatusIndex");
             if (ViewBag.PermitMengajarExist != null && ViewBag.PermitMengajarExist == "Deraf" || ViewBag.PermitMengajarExist.Contains("Menunggu") || ViewBag.PermitMengajarExist.Contains("Dihantar")) return RedirectToAction("PermitMengajarIndex");
             if (ViewBag.SerahLesenExist != null && ViewBag.SerahLesenExist == "Deraf" || ViewBag.SerahLesenExist.Contains("Menunggu") || ViewBag.SerahLesenExist.Contains("Dihantar")) return RedirectToAction("SerahBatalLesenIndex");
-            
+
             return View();
         }
 
@@ -143,9 +143,9 @@ namespace TourlistWeb.Controllers
                 }
             }
 
-           
+
             ViewBag.ilp_branch = ilpBLL.GetILPStatusModul(organization.organization_idx.ToString(), "ILP_ADDBRANCH");
-           
+
             var license = ilpBLL.GetPermohonanBaharu(Guid.Parse(Session["UID"].ToString()), "ILP_ADDBRANCH");
             List<IlpViewModels.ilp_application> app = new List<IlpViewModels.ilp_application>();
             string smodule = "ILP_ADDBRANCH";
@@ -189,9 +189,9 @@ namespace TourlistWeb.Controllers
                 }
 
             }
-            ViewBag.latestStatus= latestStatus;
-            ViewBag.latestModule= latestModule;
-            ViewBag.latestAppNo=latestAppNo;
+            ViewBag.latestStatus = latestStatus;
+            ViewBag.latestModule = latestModule;
+            ViewBag.latestAppNo = latestAppNo;
 
         }
 
@@ -207,8 +207,8 @@ namespace TourlistWeb.Controllers
             ViewBag.license_type = license_type;
             ViewBag.application_status_code = ilpBLL.GetApplicationStatusCode(stubid);
             string userID = Session["UID"].ToString();
-            
-           // int iCount = ilpBLL.checkDokumenSokongan(stubid.ToString(), license1.application_module, userID);
+
+            // int iCount = ilpBLL.checkDokumenSokongan(stubid.ToString(), license1.application_module, userID);
             int iCount = ilpBLL.checkDokumenSokongan(stubid.ToString(), "ILP_DOKUMEN", userID);
 
             if (iCount == 0)
@@ -238,14 +238,16 @@ namespace TourlistWeb.Controllers
             return View();
         }
 
-        public ActionResult LesenBaharuIndex()
+        public ActionResult LesenBaharuIndex(string lesenBaharu)
         {
             licenseCheck();
             var license = ilpBLL.GetPermohonanBaharu(Guid.Parse(Session["UID"].ToString()), "ILP_NEW");
             ViewBag.code_setup = license.application_status_code;
             ViewBag.id = license.stub_ref;
+            ViewBag.OrgID = license.organization_ref;
             //if (license.active_status == 0)
-            if (license.ilp_idx == Guid.Empty)
+            //if (license.ilp_idx == Guid.Empty)
+            if (lesenBaharu=="True")
             {
                 //ilpBLL.CreateLesenBaharu(Guid.Parse(Session["UID"].ToString()), "PERMOHONAN BAHARU", "ILP Permohonan Baharu", "ILP Dokumen Sokongan", "ILP_NEW");
                 var userID = Session["UID"];
@@ -282,16 +284,16 @@ namespace TourlistWeb.Controllers
         {
             licenseCheck();
             var license = ilpBLL.GetPermohonanBaharuByIdx(application_ref);
-          
+
             var checklist = ilpBLL.GetIlpChecklist(license.stub_ref, license_type, StatusCode);
             ViewBag.Checklist = checklist.OrderBy(c => c.order);
-            ViewBag.Licenses = license;            
+            ViewBag.Licenses = license;
             ViewBag.OpenChecklist = 1;
             return View(page);
         }
 
         [HttpGet]
-        public ActionResult ILPChecklistAddBranch(Guid application_ref, String license_type, String page, string StatusCode, string AppNo )
+        public ActionResult ILPChecklistAddBranch(Guid application_ref, String license_type, String page, string StatusCode, string AppNo)
         {
             licenseCheck();
             var license = ilpBLL.GetPermohonanBaharuByIdx(application_ref);
@@ -307,7 +309,7 @@ namespace TourlistWeb.Controllers
         [HttpPost]
         public JsonResult ILPDocumentChecklist(Guid application_ref)
         {
-            
+
             var license = ilpBLL.GetPermohonanBaharuByIdx(Guid.Parse(Request["application_ref"].ToString()));
             var checklist = ilpBLL.GetIlpChecklistDokumen(license.supporting_document_list);
             var list = checklist.OrderBy(c => c.order);
@@ -350,7 +352,7 @@ namespace TourlistWeb.Controllers
         {
             var organization = ilpBLL.GetOrganization(Guid.Parse(Session["UID"].ToString()));
             Object[] obj = {
-                organization 
+                organization
             };
             return Json(obj, JsonRequestBehavior.AllowGet);
         }
@@ -381,11 +383,11 @@ namespace TourlistWeb.Controllers
             var module_id = Request["module_id"];
             if (ilp_idx != null && module_id != null && module_id == "ILP_ADDBRANCH")
             {
-                    var ilpBranch = ilpBLL.GetIlpBranches(Guid.Parse(ilp_idx)).ToList();
-                    if (ilpBranch != null && ilpBranch.Count > 0)
-                    {
-                        ilpBLL.UpdateChecklistStatus(Guid.Parse(Request["chkitem_instance_idx"].ToString()));
-                    }
+                var ilpBranch = ilpBLL.GetIlpBranches(Guid.Parse(ilp_idx)).ToList();
+                if (ilpBranch != null && ilpBranch.Count > 0)
+                {
+                    ilpBLL.UpdateChecklistStatus(Guid.Parse(Request["chkitem_instance_idx"].ToString()));
+                }
             }
             else
             {
@@ -603,7 +605,7 @@ namespace TourlistWeb.Controllers
             coreOrganizations.authorized_capital = Decimal.Parse(Request["authorized_capital"]);
             coreOrganizations.paid_capital = Decimal.Parse(Request["paid_capital"]);
             coreOrganizations.parent_org_idx = Guid.Parse(Request["parent_org_idx"].ToString());
-            coreOrganizations.pbt_ref= Guid.Parse(Request["pbt_ref"].ToString());
+            coreOrganizations.pbt_ref = Guid.Parse(Request["pbt_ref"].ToString());
             ilpBLL.UpdateOrganization(coreOrganizations);
             ilpBLL.UpdateChecklistStatus(Guid.Parse(Request["chkitem_instance_idx"].ToString()));
 
@@ -641,7 +643,8 @@ namespace TourlistWeb.Controllers
             shareholder.organization_shareholder_idx = Guid.Parse(Request["organization_shareholder_idx"].ToString());
 
 
-            if (isPerson == "true") {
+            if (isPerson == "true")
+            {
                 if (Request.Files.Count > 0)
                 {
                     HttpFileCollectionBase files = Request.Files;
@@ -755,9 +758,9 @@ namespace TourlistWeb.Controllers
 
                     fname = Path.Combine(Server.MapPath("~/Attachment/"), name);
                     string path = this.GetUploadFolder(Tourlist.Common.TourlistEnums.MotacModule.ILP, name); //"/Attachment/" + name;
-                    //file.SaveAs(fname);
-                    //use common upload in base contoller
-                     this.UploadSuppDocs(file, name, Tourlist.Common.TourlistEnums.MotacModule.ILP);
+                                                                                                             //file.SaveAs(fname);
+                                                                                                             //use common upload in base contoller
+                    this.UploadSuppDocs(file, name, Tourlist.Common.TourlistEnums.MotacModule.ILP);
 
                     if (files.AllKeys[i] == "id_upload")
                     {
@@ -885,7 +888,7 @@ namespace TourlistWeb.Controllers
             //if (license.active_status == 0)
             if (license.ilp_idx == Guid.Empty || license.application_status_code == "COMPLETED")
             {
-               // ilpBLL.CreateLesenBaharu(Guid.Parse(Session["UID"].ToString()), "PEMBAHARUAN LESEN", "ILP Pembaharuan Lesen", "ILP Dokumen Sokongan", "ILP_RENEW");
+                // ilpBLL.CreateLesenBaharu(Guid.Parse(Session["UID"].ToString()), "PEMBAHARUAN LESEN", "ILP Pembaharuan Lesen", "ILP Dokumen Sokongan", "ILP_RENEW");
                 var userID = Session["UID"];
                 Guid Id = new Guid(userID.ToString());
                 var user = coreHelper.GetCoreUserByGuid(Id);
@@ -902,7 +905,7 @@ namespace TourlistWeb.Controllers
                 license = ilpBLL.GetPermohonanBaharu(Guid.Parse(Session["UID"].ToString()), "ILP_RENEW");
             }
             ViewBag.Licenses = license;
-            var checklist = ilpBLL.GetIlpChecklist(license.stub_ref, "ILP_PEMBAHARUAN_LESEN",license.application_status_code);
+            var checklist = ilpBLL.GetIlpChecklist(license.stub_ref, "ILP_PEMBAHARUAN_LESEN", license.application_status_code);
             ViewBag.Checklist = checklist.OrderBy(c => c.order);
             ViewBag.OpenChecklist = 1;
             ViewBag.ReadOnly = true;
@@ -929,8 +932,8 @@ namespace TourlistWeb.Controllers
 
         public JsonResult GetRenewalDurationCommon(string applyid)
         {
-             var ilplicense = TourlistUnitOfWork.IlpLicenses.Find(x => x.stub_ref.ToString() == applyid).FirstOrDefault();
-            
+            var ilplicense = TourlistUnitOfWork.IlpLicenses.Find(x => x.stub_ref.ToString() == applyid).FirstOrDefault();
+
             var duration = ilpBLL.GetRenewalDuration(ilplicense.ilp_idx);
             Object[] obj = {
                 duration
@@ -947,23 +950,24 @@ namespace TourlistWeb.Controllers
         {
             string userID = Session["UID"].ToString();
             var organization = ilpBLL.GetOrganization(userID);
-
+            ViewBag.OrgID = organization;
             ViewBag.ilp_branch = ilpBLL.GetILPStatusModul(organization.organization_idx.ToString(), "ILP_ADDBRANCH");
             //licenseCheck();
             var license = ilpBLL.GetPermohonanBaharu(Guid.Parse(Session["UID"].ToString()), "ILP_ADDBRANCH");
-          
+
             ViewBag.license_type = "ILP_ADDBRANCH";
             ViewBag.Licenses = license;
             ViewBag.AppNo = license.application_no;
             ViewBag.code_setup = license.application_status_code;
             return ILPChecklist(license.ilp_idx, "ILP_TAMBAH_CAWANGAN", "TambahCawanganIndex", license.application_status_code);
-           // return View();
+            // return View();
         }
 
-        public void ajaxGenerateApplicationStubs(string Module)
+        public void ajaxGenerateApplicationStubs(string Module, string OrgID)
         {
             var userID = Session["UID"];
             Guid Id = new Guid(userID.ToString());
+            Guid OrganizationID = Guid.Parse(OrgID);
             var user = coreHelper.GetCoreUserByGuid(Id);
 
             if (Module == "Branch")
@@ -972,7 +976,7 @@ namespace TourlistWeb.Controllers
                 Tourlist.Common.TourlistEnums.MotacModule.ILP,
                 Tourlist.Common.TourlistEnums.ModuleLicenseType.TIADA,
                 Tourlist.Common.TourlistEnums.SolModulesType.ILP_ADDBRANCH,
-                Tourlist.Common.TourlistEnums.ApplicationStatusRefType.STATUSAWAM,user);
+                Tourlist.Common.TourlistEnums.ApplicationStatusRefType.STATUSAWAM, user);
             }
             else if (Module == "Tukar Status")
             {
@@ -981,6 +985,13 @@ namespace TourlistWeb.Controllers
                 Tourlist.Common.TourlistEnums.ModuleLicenseType.TIADA,
                 Tourlist.Common.TourlistEnums.SolModulesType.ILP_CHANGESTATUS,
                 Tourlist.Common.TourlistEnums.ApplicationStatusRefType.STATUSAWAM, user);
+
+                Guid stubID = stub.application_Stubs.apply_idx;
+
+                coreOrgHelper.ChangeStatusOrganization_SaveNew(OrganizationID, stubID, Id);
+                coreOrgHelper.ChangeStatusShareHolder_SaveNew(OrganizationID, stubID, Id);
+                coreOrgHelper.ChangeStatusDirector_SaveNew(OrganizationID, stubID, Id);
+
             }
 
 
@@ -1047,7 +1058,8 @@ namespace TourlistWeb.Controllers
                         ilpBLL.StoreMultiSelect(select, Guid.Parse(Session["UID"].ToString()));
                     }
                 }
-            } else
+            }
+            else
             {
                 branch.ilp_license_idx = Guid.Parse(Request["ilp_license_idx"].ToString());
                 var a = Request["paid_capital"];
@@ -1059,7 +1071,7 @@ namespace TourlistWeb.Controllers
                 {
                     branch.authorized_capital = Decimal.Parse(Request["authorized_capital"]);
                 }
-                
+
                 branch.branch_addr_1 = Request["branch_addr_1"];
                 branch.branch_addr_2 = Request["branch_addr_2"];
                 branch.branch_addr_3 = Request["branch_addr_3"];
@@ -1101,18 +1113,18 @@ namespace TourlistWeb.Controllers
             return Json(obj, JsonRequestBehavior.AllowGet);
         }
 
-        //added by samsuri on 2 Jan 2024
+        //added by samsuri (CR#57259)  on 2 Jan 2024
         [HttpGet]
-        public JsonResult ILPBranchesActive(Guid application_ref)
+        public JsonResult ILPBranchesActive(Guid Org_ref)
         {
-            var branches = ilpBLL.GetIlpBranchesActive(application_ref);
+            var branches = ilpBLL.GetIlpBranchesActive(Org_ref);
             Object[] obj = {
                 new { branches }
             };
             return Json(obj, JsonRequestBehavior.AllowGet);
         }
 
-        //added by samsuri on 2 Jan 2024
+        //added by samsuri (CR#57259)  on 2 Jan 2024
         [HttpGet]
         public JsonResult ILPBranchesbyBranchIdx(Guid branches_idx)
         {
@@ -1194,38 +1206,39 @@ namespace TourlistWeb.Controllers
             var license = ilpBLL.GetPermohonanBaharu(Guid.Parse(Session["UID"].ToString()), "ILP_CHANGESTATUS");
             ViewBag.code_setup = license.application_status_code;
             ViewBag.id = license.stub_ref;
-            if (license.active_status == 0)
-            {
-                //ilpBLL.CreateLesenBaharu(Guid.Parse(Session["UID"].ToString()), "TUKAR STATUS", "ILP Tukar Status", "ILP Tukar Status Dokumen Sokongan", "ILP_CHANGESTATUS");
-                Guid Id = new Guid(userID.ToString());
-                var user = coreHelper.GetCoreUserByGuid(Id);
-                if (user != null && user.user_organization == null)
-                {
-                    user.user_organization = user.person_ref;
-                }
-                var stub = coreHelper.GenerateApplicationStubs(
-                       Tourlist.Common.TourlistEnums.MotacModule.ILP,
-                       Tourlist.Common.TourlistEnums.ModuleLicenseType.TIADA,
-                       Tourlist.Common.TourlistEnums.SolModulesType.ILP_CHANGESTATUS,
-                       Tourlist.Common.TourlistEnums.ApplicationStatusRefType.STATUSAWAM,
-                         user);
-                Guid stubID = stub.application_Stubs.apply_idx;
-                appID = stubID.ToString(); ;
-                coreOrgHelper.ChangeStatusOrganization_SaveNew(Guid.Parse(user.user_organization.ToString()), stubID, Id);
-                coreOrgHelper.ChangeStatusShareHolder_SaveNew(Guid.Parse(user.user_organization.ToString()), stubID, Id);
-                coreOrgHelper.ChangeStatusDirector_SaveNew(Guid.Parse(user.user_organization.ToString()), stubID, Id);
-            }
-            else
-            {
-                appID = license.stub_ref.ToString(); 
-            }
+            appID = license.stub_ref.ToString();
+            //if (license.active_status == 0)
+            //{
+            //    //ilpBLL.CreateLesenBaharu(Guid.Parse(Session["UID"].ToString()), "TUKAR STATUS", "ILP Tukar Status", "ILP Tukar Status Dokumen Sokongan", "ILP_CHANGESTATUS");
+            //    Guid Id = new Guid(userID.ToString());
+            //    var user = coreHelper.GetCoreUserByGuid(Id);
+            //    if (user != null && user.user_organization == null)
+            //    {
+            //        user.user_organization = user.person_ref;
+            //    }
+            //    var stub = coreHelper.GenerateApplicationStubs(
+            //           Tourlist.Common.TourlistEnums.MotacModule.ILP,
+            //           Tourlist.Common.TourlistEnums.ModuleLicenseType.TIADA,
+            //           Tourlist.Common.TourlistEnums.SolModulesType.ILP_CHANGESTATUS,
+            //           Tourlist.Common.TourlistEnums.ApplicationStatusRefType.STATUSAWAM,
+            //             user);
+            //    Guid stubID = stub.application_Stubs.apply_idx;
+            //    appID = stubID.ToString(); ;
+            //    coreOrgHelper.ChangeStatusOrganization_SaveNew(Guid.Parse(user.user_organization.ToString()), stubID, Id);
+            //    coreOrgHelper.ChangeStatusShareHolder_SaveNew(Guid.Parse(user.user_organization.ToString()), stubID, Id);
+            //    coreOrgHelper.ChangeStatusDirector_SaveNew(Guid.Parse(user.user_organization.ToString()), stubID, Id);
+            //}
+            //else
+            //{
+            //    appID = license.stub_ref.ToString(); 
+            //}
             Session["AppID"] = appID;
             ViewBag.Licenses = license;
 
             ViewBag.module = "ILP_CHANGESTATUS";
             var checklist = ilpBLL.GetIlpChecklist(Guid.Parse(appID), "ILP_TUKAR_STATUS", license.application_status_code);
-            if (checklist!=null)
-            ViewBag.Checklist = checklist.OrderBy(c => c.order);
+            if (checklist != null)
+                ViewBag.Checklist = checklist.OrderBy(c => c.order);
 
 
             return View();
@@ -1307,13 +1320,24 @@ namespace TourlistWeb.Controllers
             }
             return StatusDropdown;
         }
-        public ActionResult TukarStatusCreate(Guid chkitem_instance_idx, Guid application_ref, String license_type, string btn, string module, Guid stubid)
+        // public ActionResult TukarStatusCreate(Guid chkitem_instance_idx, Guid application_ref, String license_type, string btn, string module, Guid stubid)
+        public ActionResult TukarStatusCreate(string btn, string module)
         {
-            ViewBag.chkitem_instance_idx = chkitem_instance_idx;
-            ViewBag.application_ref = application_ref;
-            ViewBag.license_type = license_type;
-            ViewBag.itemID = chkitem_instance_idx;
+            var chkitem_instance_idx = Request.QueryString["chkitem_instance_idx"];
+            var application_ref = Request.QueryString["application_ref"];
+            var license_type = Request.QueryString["license_type"];
 
+            if (chkitem_instance_idx != null)
+                ViewBag.chkitem_instance_idx = chkitem_instance_idx;
+            if (application_ref != null)
+                ViewBag.application_ref = application_ref;
+            if (license_type != null)
+                ViewBag.license_type = license_type;
+            //if (chkitem_instance_idx != null)
+            //    ViewBag.itemID = chkitem_instance_idx;
+
+
+            ViewBag.itemID = chkitem_instance_idx;
             ViewBag.MSG_MANDATORY = "Sila masukkan data";
             List<SelectListItem> PemegangSahamPerson = new List<SelectListItem>();
             PemegangSahamPerson = GetStatusPemeganganSahamDropDown("Person");
@@ -1421,7 +1445,7 @@ namespace TourlistWeb.Controllers
                     model.status_pegangan = shareholder.status_pegangan;
                     decimal share = (shareholder.number_of_shares / sumNumberOfShare * 100);
                     model.number_of_shares = shareholder.number_of_shares;
-                   // model.number_of_shares_string = String.Format("{0:C}", shareholder.number_of_shares);
+                    // model.number_of_shares_string = String.Format("{0:C}", shareholder.number_of_shares);
                     model.number_of_shares_string = shareholder.number_of_shares.ToString();
                     model.share_percentage = share;
                     if (shareholder.person_identifier != null)
@@ -1437,6 +1461,7 @@ namespace TourlistWeb.Controllers
             }
             ViewBag.ShareHolderAsal = modelList;
             ViewBag.module = module;
+            Guid stubid = Guid.Parse(Session["AppID"].ToString());
             ViewBag.application_status_code = ilpBLL.GetApplicationStatusCode(stubid);
             return View();
         }
@@ -1589,7 +1614,7 @@ namespace TourlistWeb.Controllers
         {
             var exist = Request["person_idx"].ToString();
             ILPPerson person = new ILPPerson();
-            
+
             if (exist != "")
             {
                 person.person_idx = Guid.Parse(Request["person_idx"].ToString());
@@ -1863,7 +1888,7 @@ namespace TourlistWeb.Controllers
                 instructorCourse.facility_details_others = Request["facility_details_others"].ToString();
                 instructorCourse.premise_is_shared = short.Parse(Request["premise_is_shared"].ToString());
                 instructorCourse.instructor_courses_idx = Guid.Parse(Request["instructor_courses_idx"].ToString());
-                
+
                 var updatedData = ilpBLL.UpdateInstructorCourse(instructorCourse);
 
                 ilpBLL.DestroyMultiSelect((Guid)updatedData.course_details);
@@ -1891,8 +1916,9 @@ namespace TourlistWeb.Controllers
                     }
                 }
 
-                
-            } else
+
+            }
+            else
             {
                 instructorCourse.license_ref = Guid.Parse(Request["ilp_license_ref"].ToString());
                 instructorCourse.person_name = Request["person_name"].ToString();
@@ -2187,7 +2213,8 @@ namespace TourlistWeb.Controllers
                 }
                 ilpBLL.UpdateChecklistStatus(Guid.Parse(Request["chkitem_instance_idx"].ToString()));
                 return true;
-            } else
+            }
+            else
             {
                 terminateLicense.terminate_type = Request["terminate_type"];
                 terminateLicense.terminate_reason = Guid.Parse(Request["terminate_reason"].ToString());
@@ -2293,7 +2320,7 @@ namespace TourlistWeb.Controllers
                         this.UploadSuppDocs(file, name, Tourlist.Common.TourlistEnums.MotacModule.ILP);
                     }
                     // Returns message that successfully uploaded
-                    
+
                     return Json("File Uploaded Successfully!");
                 }
                 catch (Exception ex)
@@ -2401,7 +2428,7 @@ namespace TourlistWeb.Controllers
             model_org.company_incdate = Request["company_incdate"].ToString();
             model_org.company_regdate = Request["company_regdate"].ToString();
             model_org.company_curassets = Request["company_curassets"].ToString();
-          //  model_org.company_totalcharge = Request["company_totalcharge"].ToString();
+            //  model_org.company_totalcharge = Request["company_totalcharge"].ToString();
             model_org.company_curliabilities = Request["company_curliabilities"].ToString();
 
             model_org.companyb_addr1 = Request["companyb_addr1"].ToString();
@@ -2489,7 +2516,7 @@ namespace TourlistWeb.Controllers
                     model_org.director_idType = Request["director_idType"].ToString();
                 }
 
-                Application = coreOrgHelper.ajaxUpdateCompanyDirectorsSSM(module_id, component_id, userID, model_org,"ILP");
+                Application = coreOrgHelper.ajaxUpdateCompanyDirectorsSSM(module_id, component_id, userID, model_org, "ILP");
             }
 
 
@@ -2581,9 +2608,8 @@ namespace TourlistWeb.Controllers
         }
 
         //Change Status Company
-        //updated by samsuri on 28 Dec 2023: ilp_branches_updated ilpUpdate ,
         [HttpPost]
-        public JsonResult ajaxChangeStatusUpdate(ilp_branches_updated ilpUpdate, core_organizations_updated orgUpdate, HttpPostedFileBase file_PerjanjianSewaBeliPermis,
+        public JsonResult ajaxChangeStatusUpdate(core_organizations_updated orgUpdate, HttpPostedFileBase file_PerjanjianSewaBeliPermis,
             HttpPostedFileBase file_PelanLantaiPermis, HttpPostedFileBase file_salinanAsalLesen, HttpPostedFileBase file_GambarPermis, string ItemID)
         {
             string userID = Session["UID"].ToString();
@@ -2591,15 +2617,8 @@ namespace TourlistWeb.Controllers
             Guid gUserID = Guid.Parse(userID);
             var is_premise = orgUpdate.is_premise_ready;
 
-            //added by samsuri on 28 Dec 2023
-            if (ilpUpdate.organization_ref != null)
-                TourlistUnitOfWork.IlpBranchesUpdated.SaveNewIlpBranch(ilpUpdate, gUserID);
 
-            //modified by samsuri on 28 Dec 2023
-            bool upd = false;
-            if(orgUpdate.is_change_address != null)
-                upd = coreOrgHelper.UpdateChangeStatusOrg(orgUpdate, gUserID);
-           
+            bool upd = coreOrgHelper.UpdateChangeStatusOrg(orgUpdate, gUserID);
             Guid chkitem_instance = Guid.Empty;
 
             if (upd == true)
@@ -2646,6 +2665,129 @@ namespace TourlistWeb.Controllers
 
             return Json(upd, JsonRequestBehavior.AllowGet);
         }
+
+        //added by samsuri (CR#57259)  on 5 jan 2024
+        [HttpPost]
+        public JsonResult ajaxChangeStatusBranchUpdate(core_organizations_updated orgUpdate, ilp_branches_updated ilpUpdate, 
+            HttpPostedFileBase file_PerjanjianSewaBeliPermis,HttpPostedFileBase file_PelanLantaiPermis, 
+            HttpPostedFileBase file_salinanAsalLesen, HttpPostedFileBase file_GambarPermis, string ItemID, string branch_stub_ref)
+        {
+            string userID = Session["UID"].ToString();
+
+            Guid gUserID = Guid.Parse(userID);
+            var is_premise = orgUpdate.is_premise_ready;
+
+            TourlistUnitOfWork.IlpBranchesUpdated.SaveNewIlpBranch(ilpUpdate, gUserID);
+            bool upd = coreOrgHelper.UpdateChangeStatusOrgforBranchInd(orgUpdate, gUserID);
+
+            Guid chkitem_instance = Guid.Empty;
+
+            Guid branch_stub_ref_idx = Guid.Parse(branch_stub_ref);
+            uploadBranchUpdatedDoc(branch_stub_ref_idx, gUserID);
+
+            if (upd == true)
+            {
+
+                if (is_premise == 0)
+                {
+                    chkitem_instance = coreOrgHelper.GetChkitemInstanceIdxByCode("SEWABELI", branch_stub_ref_idx, "ilp"); //"Perjanjian Sewa Beli Premis"
+                    RemoveDocList(chkitem_instance);
+                    chkitem_instance = coreOrgHelper.GetChkitemInstanceIdxByCode("PELANLANTAI", branch_stub_ref_idx, "ilp"); //"Perjanjian Sewa Beli Premis"
+                    RemoveDocList(chkitem_instance);
+                    chkitem_instance = coreOrgHelper.GetChkitemInstanceIdxByCode("GAMBAR", branch_stub_ref_idx, "ilp"); //"Perjanjian Sewa Beli Premis"
+                    RemoveDocList(chkitem_instance);
+                }
+                else
+                {
+                    if (file_PerjanjianSewaBeliPermis != null)
+                    {
+                        chkitem_instance = coreOrgHelper.GetChkitemInstanceIdxByCode("SEWABELI", branch_stub_ref_idx, "ilp"); //"Perjanjian Sewa Beli Premis"
+                        uploadDocSokongan(file_PerjanjianSewaBeliPermis, chkitem_instance);
+                    }
+                    if (file_PelanLantaiPermis != null)
+                    {
+                        chkitem_instance = coreOrgHelper.GetChkitemInstanceIdxByCode("PELANLANTAI", branch_stub_ref_idx, "ilp");//"Pelan Lantai Premis Perniagaan"
+                        uploadDocSokongan(file_PelanLantaiPermis, chkitem_instance);
+                    }
+                    if (file_GambarPermis != null)
+                    {
+                        chkitem_instance = coreOrgHelper.GetChkitemInstanceIdxByCode("GAMBAR", branch_stub_ref_idx, "ilp");//"Salinan Lesen *"
+                        uploadDocSokongan(file_GambarPermis, chkitem_instance);
+                    }
+                }
+                if (file_salinanAsalLesen != null)
+                {
+                    chkitem_instance = coreOrgHelper.GetChkitemInstanceIdxByCode("SALINANLESEN", branch_stub_ref_idx, "ilp");//"Salinan Lesen *"
+                    uploadDocSokongan(file_salinanAsalLesen, chkitem_instance);
+                }
+                //bool itemID = coreOrgHelper.updateListing(ItemID);
+
+
+            }
+
+            return Json(upd, JsonRequestBehavior.AllowGet);
+        }
+
+        //added by samsuri on 9 jan 2024
+        private void uploadBranchUpdatedDoc(Guid branch_stub_ref_idx, Guid userIdx)
+        {
+            Guid chkitem_instance = coreOrgHelper.GetChkitemInstanceIdxByCode("SEWABELI", branch_stub_ref_idx, "ilp"); 
+
+            if(chkitem_instance == Guid.Empty)
+            {
+                core_chkitems_instances core_Chkitems_Instances = new core_chkitems_instances();
+                core_Chkitems_Instances.chkitem_instance_idx = Guid.NewGuid();
+                core_Chkitems_Instances.chklist_tplt_item_ref = Guid.Parse("7A15C6B7-F69E-4907-905B-86727FEBBE30"); //SEWABELI
+                var ilpBranchLic = TourlistUnitOfWork.IlpLicenses.GetIlpLicenseByStubRef(branch_stub_ref_idx);
+                core_Chkitems_Instances.chklist_instance_ref = (Guid)ilpBranchLic.supporting_document_list;
+                core_Chkitems_Instances.bool1 = 0;
+                core_Chkitems_Instances.active_status = 1;
+                core_Chkitems_Instances.created_at = DateTime.Now;
+                core_Chkitems_Instances.modified_at = DateTime.Now;
+                core_Chkitems_Instances.created_by = userIdx;
+                core_Chkitems_Instances.modified_by = userIdx;
+                TourlistUnitOfWork.CoreChkItemsInstancesRepository.Add(core_Chkitems_Instances);
+                TourlistContext.SaveChanges();
+            }
+            
+            chkitem_instance = coreOrgHelper.GetChkitemInstanceIdxByCode("PELANLANTAI", branch_stub_ref_idx, "ilp");
+            if (chkitem_instance == Guid.Empty)
+            {
+                core_chkitems_instances core_Chkitems_Instances = new core_chkitems_instances();
+                core_Chkitems_Instances.chkitem_instance_idx = Guid.NewGuid();
+                core_Chkitems_Instances.chklist_tplt_item_ref = Guid.Parse("BD1AC371-9F3E-4C8F-8484-EBDB0C4E7C73"); //PELANLANTAI
+                var ilpBranchLic = TourlistUnitOfWork.IlpLicenses.GetIlpLicenseByStubRef(branch_stub_ref_idx);
+                core_Chkitems_Instances.chklist_instance_ref = (Guid)ilpBranchLic.supporting_document_list;
+                core_Chkitems_Instances.bool1 = 0;
+                core_Chkitems_Instances.active_status = 1;
+                core_Chkitems_Instances.created_at = DateTime.Now;
+                core_Chkitems_Instances.modified_at = DateTime.Now;
+                core_Chkitems_Instances.created_by = userIdx;
+                core_Chkitems_Instances.modified_by = userIdx;
+                TourlistUnitOfWork.CoreChkItemsInstancesRepository.Add(core_Chkitems_Instances);
+                TourlistContext.SaveChanges();
+            }
+
+            chkitem_instance = coreOrgHelper.GetChkitemInstanceIdxByCode("GAMBAR", branch_stub_ref_idx, "ilp");
+            if (chkitem_instance == Guid.Empty)
+            {
+                core_chkitems_instances core_Chkitems_Instances = new core_chkitems_instances();
+                core_Chkitems_Instances.chkitem_instance_idx = Guid.NewGuid();
+                core_Chkitems_Instances.chklist_tplt_item_ref = Guid.Parse("33C2DD1E-044C-4183-AF24-6390DAE72F5C"); //GAMBAR
+                var ilpBranchLic = TourlistUnitOfWork.IlpLicenses.GetIlpLicenseByStubRef(branch_stub_ref_idx);
+                core_Chkitems_Instances.chklist_instance_ref = (Guid)ilpBranchLic.supporting_document_list;
+                core_Chkitems_Instances.bool1 = 0;
+                core_Chkitems_Instances.active_status = 1;
+                core_Chkitems_Instances.created_at = DateTime.Now;
+                core_Chkitems_Instances.modified_at = DateTime.Now;
+                core_Chkitems_Instances.created_by = userIdx;
+                core_Chkitems_Instances.modified_by = userIdx;
+                TourlistUnitOfWork.CoreChkItemsInstancesRepository.Add(core_Chkitems_Instances);
+                TourlistContext.SaveChanges();
+            }
+
+        }
+
         public void uploadDocSokongan(HttpPostedFileBase file, Guid chkitem_instance)
         {
 
@@ -2658,7 +2800,7 @@ namespace TourlistWeb.Controllers
             CoreOrganizationModel.CoreDocument doc = new CoreOrganizationModel.CoreDocument();
 
             doc.FileName = file.FileName;
-            doc.UploadLocation = this.GetUploadFolder(TourlistEnums.MotacModule.MM2H, filename); //folder;
+            doc.UploadLocation = this.GetUploadFolder(TourlistEnums.MotacModule.ILP, filename); //folder;
             doc.chkitem_instanceID = chkitem_instance.ToString();
             doc.UploadFileName = filename;
 
@@ -2667,7 +2809,7 @@ namespace TourlistWeb.Controllers
             if (ID)
             {
                 //use common upload in base contoller
-                this.UploadSuppDocs(file, filename, TourlistEnums.MotacModule.MM2H);
+                this.UploadSuppDocs(file, filename, TourlistEnums.MotacModule.ILP);
 
             }
         }
@@ -2725,6 +2867,229 @@ namespace TourlistWeb.Controllers
             return Json(PBT, JsonRequestBehavior.AllowGet);
         }
 
+        [HttpPost]
+        public JsonResult ajaxChangeStatusShareholderPersonUpdate(core_persons obj, string status_shareholder, decimal number_of_shares, string justification,
+            string justificationID, HttpPostedFileBase file_MyKad, string typeFile, HttpPostedFileBase file_JustPerson, string typeFileJust, Guid AppID)
+        {
 
+            var userID = Session["UID"].ToString();
+            obj.modified_by = Guid.Parse(userID);
+
+            bool ID = coreOrgHelper.ChangeStatusUpdatePerson(obj, status_shareholder, number_of_shares, "Shareholder", justification, justificationID);
+
+
+            if (ID == true)
+            {
+                //    bool itemID = coreOrgHelper.updateListing(ItemID);
+                //  bool itemID = coreOrgHelper.updateStatusShareHolder(status_shareholder, shareholderID, "");
+
+                if (file_MyKad != null)
+                {
+                    uploadPersonID(file_MyKad, obj.person_idx.ToString(), typeFile);
+                }
+
+                if (file_JustPerson != null)
+                {
+                    uploadPersonID(file_JustPerson, obj.person_idx.ToString(), typeFileJust);
+                }
+
+
+
+                coreOrgHelper.UpdateChangeStatusIS(Guid.Parse(userID), "shareholder", AppID);
+
+
+            }
+
+            return Json(ID, JsonRequestBehavior.AllowGet);
+
+
+        }
+
+        public void uploadPersonID(HttpPostedFileBase file, string PersonID, string typeFile)
+        {
+
+            var Timestamp = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds();
+
+            string filename = Path.GetFileName(Timestamp + "_" + file.FileName);
+            string folder = "/Attachment/" + filename;
+            string foldersave = Server.MapPath("~/Attachment");
+            CoreOrganizationModel.CoreDocument doc = new CoreOrganizationModel.CoreDocument();
+
+            var userID = Session["UID"].ToString();
+            doc.FileName = file.FileName;
+            doc.UploadLocation = this.GetUploadFolder(TourlistEnums.MotacModule.ILP, filename); //folder;
+            doc.PersonID = PersonID;
+            doc.UploadFileName = filename;
+            doc.type = typeFile;
+            doc.userID = userID;
+
+            bool ID = coreOrgHelper.updateDocumentSokonganPerson(doc);
+
+            if (ID)
+            {
+                //use common upload in base contoller
+                this.UploadSuppDocs(file, filename, TourlistEnums.MotacModule.ILP);
+                //using (Stream fs = file.InputStream)
+                //{
+                //    using (BinaryReader br = new BinaryReader(fs))
+                //    {
+                //        byte[] bytes = br.ReadBytes((Int32)fs.Length);
+                //        file.SaveAs(Path.Combine(foldersave, filename));
+                //    }
+                //}
+
+            }
+        }
+
+
+        public void uploadOrganizationID(HttpPostedFileBase file, string OrgID, string typeFile)
+        {
+
+            var Timestamp = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds();
+
+            string filename = Path.GetFileName(Timestamp + "_" + file.FileName);
+            string folder = "/Attachment/" + filename;
+            string foldersave = Server.MapPath("~/Attachment");
+            CoreOrganizationModel.CoreDocument doc = new CoreOrganizationModel.CoreDocument();
+
+            var userID = Session["UID"].ToString();
+            doc.FileName = file.FileName;
+            doc.UploadLocation = this.GetUploadFolder(TourlistEnums.MotacModule.ILP, filename); //folder;
+            doc.OrgID = OrgID;
+            doc.UploadFileName = filename;
+            doc.type = typeFile;
+            doc.userID = userID;
+
+            bool ID = coreOrgHelper.updateDocumentSokonganOrganization(doc);
+
+            if (ID)
+            {
+                this.UploadSuppDocs(file, filename, TourlistEnums.MotacModule.ILP);
+            }
+        }
+
+        public bool uploadOtherDocument(HttpPostedFileBase file, string FileName, string DocID, string moduleID, string appID)
+        {
+
+            var Timestamp = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds();
+
+            string filename = Path.GetFileName(Timestamp + "_" + file.FileName);
+            string folder = "/Attachment/" + filename;
+
+            CoreOrganizationModel.CoreOtherDocument doc = new CoreOrganizationModel.CoreOtherDocument();
+
+            var userID = Session["UID"].ToString();
+
+            doc.module_ref = moduleID;
+            doc.transaction_ref = appID;
+            doc.document_upload_path = this.GetUploadFolder(TourlistEnums.MotacModule.ILP, filename); //folder;
+
+            doc.document_description = file.FileName;
+            doc.UserID = userID;
+
+            bool ID = false;
+            if (FileName != "")
+            {
+                doc.document_name = FileName;
+                ID = coreOrgHelper.OtherDocument_SaveNew(doc);
+            }
+            else
+            {
+                doc.docID = DocID;
+                ID = coreOrgHelper.UpdateOtherDocument(doc);
+            }
+
+
+            string foldersave = Server.MapPath("~/Attachment");
+            if (ID)
+            {
+                //use common upload in base contoller
+                this.UploadSuppDocs(file, filename, TourlistEnums.MotacModule.MM2H);
+
+                return true;
+            }
+            return false;
+
+        }
+
+
+
+        [HttpPost]
+        public JsonResult ajaxShareHolderDetail(string identifier)
+        {
+            var ShareHolder = coreOrgHelper.GetShareHolderDetail(identifier);
+            return Json(ShareHolder, JsonRequestBehavior.AllowGet);
+        }
+        [HttpPost]
+        public JsonResult ajaxShareHolderDetailByID(string identifier)
+        {
+            var ShareHolder = coreOrgHelper.GetShareHolderDetailByID(identifier);
+            return Json(ShareHolder, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult ajaxChangeStatusShareholderOrgUpdate(TourlistDataLayer.DataModel.core_organizations obj, string status_shareholder, string number_of_shares, string registered_year, string country_ref, string justification, string justificationID,
+             HttpPostedFileBase file_Just, string typeFileJust, Guid AppID)
+        {
+
+            var userID = Session["UID"].ToString();
+            obj.modified_by = Guid.Parse(userID);
+
+            bool ID = coreOrgHelper.ChangeStatusUpdateOrganization(obj, status_shareholder, decimal.Parse(number_of_shares), registered_year, country_ref, userID, justification, justificationID);
+            if (ID == true)
+            {
+
+                if (file_Just != null)
+                {
+                    uploadOrganizationID(file_Just, obj.organization_idx.ToString(), typeFileJust);
+                }
+
+
+
+                coreOrgHelper.UpdateChangeStatusIS(Guid.Parse(userID), "shareholder", AppID);
+
+            }
+            return Json(ID, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult ajaxChangeStatusShareholderAdd(core_persons obj, string status_shareholder, HttpPostedFileBase file_MyKad, decimal number_of_shares, Guid OrgID, Guid AppID, string type, string filename)
+        {
+
+            var userID = Session["UID"].ToString();
+            Guid Idx = Guid.NewGuid();
+            obj.person_idx = Idx;
+            // Guid OrgID = Guid.Empty;
+            obj.modified_by = Guid.Parse(userID);
+
+            bool ID = coreOrgHelper.ChangeStatusUpdatePerson_SaveNew(obj, status_shareholder, number_of_shares, AppID, OrgID, Guid.Parse(userID), type, false, "");
+
+            if (ID == true)
+            {
+                //    bool itemID = coreOrgHelper.updateListing(ItemID);
+                //  bool itemID = coreOrgHelper.updateStatusShareHolder(status_shareholder, shareholderID, "");
+
+                if (file_MyKad != null)
+                {
+                    uploadPersonID(file_MyKad, Idx.ToString(), "MYKAD");
+
+
+                }
+
+                coreOrgHelper.UpdateChangeStatusIS(Guid.Parse(userID), "shareholder", AppID);
+
+            }
+            return Json(ID, JsonRequestBehavior.AllowGet);
+
+        }
+
+        [HttpPost]
+        public JsonResult ajaxChangeStatusDirectorDetail(string IDX)
+        {
+            //var directors = coreOrgHelper.GetDirectorDetail(IDX);
+            var directors = coreOrgHelper.GetChangeStatusDirectorDetail(IDX);
+
+            return Json(directors, JsonRequestBehavior.AllowGet);
+        }
     }
 }

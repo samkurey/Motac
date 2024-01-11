@@ -87,24 +87,17 @@ namespace TourlistDataLayer.Persistence.Repositories
             return ilpBranches;
         }
 
-        //added by samsuri on 2 jan 2024
-        public List<ilp_branches> GetIlpBranchesActiveByApplicationRef(Guid application_ref)
-        {
-            var ilpBranches = TourlistContext.IlpBranches.Where(c => c.ilp_license_idx == application_ref).ToList();
-            return ilpBranches;
-        }
-
-        //Added by samsuri on 2 Jan 2024
+        //Added by samsuri (CR#57259) on 2 Jan 2024
         public List<ilp_branches> GetIlpBranchesByBranchIdx(Guid branch_Idx)
         {
             var ilpBranches = TourlistContext.IlpBranches.Where(c => c.ilp_branches_idx == branch_Idx).ToList();
             return ilpBranches;
         }
 
-        //Added by samsuri on 3 Jan 2024
+        //Added by samsuri (CR#57259) on 3 Jan 2024
         public List<ilp_branches_updated> GetIlpBranchesUpdatedByBranchIdx(Guid branch_Idx)
         {
-            var ilpBranchesUpdated = TourlistContext.IlpBranchesUpdated.Where(c => c.ilp_branches_idx == branch_Idx).ToList();
+            var ilpBranchesUpdated = TourlistContext.IlpBranchesUpdated.Where(c => c.ilp_add_branches_upd_idx == branch_Idx).ToList();
             return ilpBranchesUpdated;
         }
 

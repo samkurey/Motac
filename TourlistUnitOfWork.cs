@@ -129,7 +129,7 @@ namespace TourlistDataLayer.Persistence
             CoreSolModulesRepository = new CoreSolModulesRepository(context);
             IlpLicenses = new IlpLicensesRepository(context);
             IlpBranches = new IlpBranchesRepository(context);
-            IlpBranchesUpdated = new IlpBranchesUpdatedRepository(context); //added by samsuri on 28 Dec 2023
+            IlpBranchesUpdated = new IlpBranchesUpdatedRepository(context); //added by samsuri (CR#57259) on 28 Dec 2023
             IlpPermits = new IlpPermitsRepository(context);
             IlpPersonReferences = new IlpPersonReferencesRepository(context);
             IlpInstructorCourses = new IlpInstructorCoursesRepository(context);
@@ -169,6 +169,7 @@ namespace TourlistDataLayer.Persistence
             TobtabForeignPartnersRepository = new TobtabForeignPartnersRepository(context);
             TobtabTerminateLicenseRepository = new TobtabTerminateLicenseRepository(context);
             TobtabAddBranchesRepository = new TobtabAddBranchesRepository(context);
+            TobtabAddBranchesUpdatedRepository = new TobtabAddBranchesUpdatedRepository(context); //added by samsuri (CR#57258) on 10 jan 2024
             TobtabMarketingAgentRepository = new TobtabMarketingAgentRepository(context);
             TobtabMarketingAreaRepository = new TobtabMarketingAreaRepository(context);
             TobtabTGExceptionsRepository = new TobtabTGExceptionsRepository(context);
@@ -221,6 +222,17 @@ namespace TourlistDataLayer.Persistence
             CompoundRepository = new CompoundRepository(context);
             CompoundAppealRepository = new CompoundAppealRepository(context);
             CompoundBtkRepository = new CompoundBtkRepository(context);
+            GblCompanyAddrRepository = new GblCompanyAddrRepository(context);
+            GblSuspensionRepository = new GblSuspensionRepository(context);
+            GblSuspensionAppealRepository = new GblSuspensionAppealRepository(context);
+            GblSuspensionMinuteRepository = new GblSuspensionMinuteRepository(context);
+            GblSuspensionNoticeRepository = new GblSuspensionNoticeRepository(context);
+            GblSuspensionProcessRepository = new GblSuspensionProcessRepository(context);
+            GblSuspensionReceivedNoticeRepository = new GblSuspensionReceivedNoticeRepository(context);
+            GblSuspensionSendNoticeRepository = new GblSuspensionSendNoticeRepository(context);
+            GblSuspensionSyorRepository = new GblSuspensionSyorRepository(context);
+            VwGblListRepository = new VwGblListRepository(context);
+            VwGblProcessListRepository = new VwGblProcessListRepository(context);
             VwEnforcementInvestigationsRepository = new VwEnforcementInvestigationsRepository(context);
             CardMgmtRepository = new CardMgmtRepository(context);
             CardMgmtDetailRepository = new CardMgmtDetailRepository(context);
@@ -323,6 +335,7 @@ namespace TourlistDataLayer.Persistence
             UtilityAuditTrailRepository = new UtilityAuditTrailRepository(context);
             VwMeetingListRepository = new VwMeetingListRepository(context);
             OfficerDashboardRepository = new OfficerDashboardRepository(context);
+            VwWedoDashboardRepository = new VwWedoDashboardRepository(context);
         }
         public OfficerDashboardRepository OfficerDashboardRepository { get; private set; }
         public VwMeetingListRepository VwMeetingListRepository { get; private set; }
@@ -478,8 +491,7 @@ namespace TourlistDataLayer.Persistence
         public MM2HAddBranchesRepository MM2HAddBranchesRepository { get; private set; }
         public IlpLicensesRepository IlpLicenses { get; private set; }
         public IlpBranchesRepository IlpBranches { get; private set; }
-
-        public IlpBranchesUpdatedRepository IlpBranchesUpdated { get; private set; } //added by samsuri on 28 De 2023
+        public IlpBranchesUpdatedRepository IlpBranchesUpdated { get; private set; } //added by samsuri (CR#57259) on 28 De 2023
         public IlpPermitsRepository IlpPermits { get; private set; }
         public IlpPersonReferencesRepository IlpPersonReferences { get; private set; }
         public IlpInstructorCoursesRepository IlpInstructorCourses { get; private set; }
@@ -518,6 +530,7 @@ namespace TourlistDataLayer.Persistence
         public TobtabForeignPartnersRepository TobtabForeignPartnersRepository { get; private set; }
         public TobtabTerminateLicenseRepository TobtabTerminateLicenseRepository { get; private set; }
         public TobtabAddBranchesRepository TobtabAddBranchesRepository { get; private set; }
+        public TobtabAddBranchesUpdatedRepository TobtabAddBranchesUpdatedRepository { get; private set; } //added by samsuri (CR#57258)  on 10 jan 2024
         public TobtabMarketingAgentRepository TobtabMarketingAgentRepository { get; private set; }
         public TobtabMarketingAreaRepository TobtabMarketingAreaRepository { get; private set; }
         public TobtabTGExceptionsRepository TobtabTGExceptionsRepository { get; private set; }
@@ -553,6 +566,17 @@ namespace TourlistDataLayer.Persistence
         public CompoundRepository CompoundRepository { get; private set; }
         public CompoundAppealRepository CompoundAppealRepository { get; private set; }
         public CompoundBtkRepository CompoundBtkRepository { get; private set; }
+        public GblCompanyAddrRepository GblCompanyAddrRepository { get; private set; }
+        public GblSuspensionRepository GblSuspensionRepository { get; private set; }
+        public GblSuspensionAppealRepository GblSuspensionAppealRepository { get; private set; }
+        public GblSuspensionMinuteRepository GblSuspensionMinuteRepository { get; private set; }
+        public GblSuspensionNoticeRepository GblSuspensionNoticeRepository { get; private set; }
+        public GblSuspensionProcessRepository GblSuspensionProcessRepository { get; private set; }
+        public GblSuspensionReceivedNoticeRepository GblSuspensionReceivedNoticeRepository { get; private set; }
+        public GblSuspensionSendNoticeRepository GblSuspensionSendNoticeRepository { get; private set; }
+        public GblSuspensionSyorRepository GblSuspensionSyorRepository { get; private set; }
+        public VwGblListRepository VwGblListRepository { get; private set; }
+        public VwGblProcessListRepository VwGblProcessListRepository { get; private set; }
         public EnforcementCalendarRepository EnforcementCalendarRepository { get; private set; }
         public VwEnforcementInvestigationsRepository VwEnforcementInvestigationsRepository { get; private set; }
         public Enforcement_investigations_sessionRepository Enforcement_investigations_sessionRepository { get; set; }
@@ -647,6 +671,7 @@ namespace TourlistDataLayer.Persistence
         public VwCompoundSSMRepository VwCompoundSSMRepository { get; set; }
         public VwEnforceUserDetailRepository VwEnforceUserDetailRepository { get; set; }
         public UtilityAuditTrailRepository UtilityAuditTrailRepository { get; set; }
+        public VwWedoDashboardRepository VwWedoDashboardRepository { get; set; }
 
         public int Complete()
         {

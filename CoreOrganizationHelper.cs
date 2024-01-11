@@ -1993,7 +1993,7 @@ namespace TourlistWebAPI.ClassLib
                 coreChklstLists = unitOfWork.CoreChklstListsRepository.Find(c => (c.chklist_code.ToString() == "TOBTAB_CHANGE_STATUS_DOCUMENT")).FirstOrDefault();
                 coreChkLstItems = unitOfWork.CoreChklstItemsRepository.Find(c => (c.chklist_ref == coreChklstLists.chklist_idx && c.descr_string1 == code)).FirstOrDefault();
                 coreChkitemsInstances = unitOfWork.CoreChkItemsInstancesRepository.Find(c => (c.chklist_instance_ref == tobtabLicense.supporting_document_list && c.chklist_tplt_item_ref == coreChkLstItems.item_idx)).FirstOrDefault();
-
+                if (coreChkitemsInstances == null) return Guid.Empty; //added by samsuri on 10 jan 2024
             }
             else if (module == "ilp")
             {
@@ -2001,7 +2001,7 @@ namespace TourlistWebAPI.ClassLib
                 coreChklstLists = unitOfWork.CoreChklstListsRepository.Find(c => (c.chklist_code.ToString() == "ILP_TUKAR_STATUS_DOKUMEN")).FirstOrDefault();
                 coreChkLstItems = unitOfWork.CoreChklstItemsRepository.Find(c => (c.chklist_ref == coreChklstLists.chklist_idx && c.descr_string1 == code)).FirstOrDefault();
                 coreChkitemsInstances = unitOfWork.CoreChkItemsInstancesRepository.Find(c => (c.chklist_instance_ref == ilpLicense.supporting_document_list && c.chklist_tplt_item_ref == coreChkLstItems.item_idx)).FirstOrDefault();
-
+                if (coreChkitemsInstances == null) return Guid.Empty; //added by samsuri on 10 jan 2024
             }
             return coreChkitemsInstances.chkitem_instance_idx;
 
@@ -2139,7 +2139,7 @@ namespace TourlistWebAPI.ClassLib
                                old_addr_2 = company.old_addr_2,
                                old_addr_3 = company.old_addr_3,
                                old_postcode = company.old_postcode,
-                               old_city_idx = company.old_city, //added by samsuri on 29 Dec 2023
+                               old_city_idx = company.old_city, //added by samsuri (CR#57259) on 29 Dec 2023
                                old_city = geo.GetGuidTownByIdx((Guid)company.old_city),
                                old_state = geo.GetGuidStateByIdx((Guid)company.old_state),
                                old_mobile_no = company.old_mobile_no,
@@ -3986,7 +3986,7 @@ namespace TourlistWebAPI.ClassLib
                 organizationsUpdated.created_dt = DateTime.Now;
                 organizationsUpdated.modified_dt = DateTime.Now;
 
-                unitOfWork.CoreOrganizationsUpdatedRepository.Add(organizationsUpdated);                
+                unitOfWork.CoreOrganizationsUpdatedRepository.Add(organizationsUpdated);
                 var result = unitOfWork.Complete(); //motacContext.SaveChanges();
 
 
@@ -4309,6 +4309,27 @@ namespace TourlistWebAPI.ClassLib
                 organizationsUpdated.created_dt = DateTime.Now;
                 organizationsUpdated.modified_dt = DateTime.Now;
                                
+                unitOfWork.CoreOrganizationsUpdatedRepository.TourlistContext.Entry(organizationsUpdated).State = EntityState.Modified;
+                unitOfWork.Complete();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        //added by samsuri (CR#57259) on 5 jan 2024
+        public bool UpdateChangeStatusOrgforBranchInd(core_organizations_updated org_updated, Guid userID)
+        {
+            try
+            {
+                var organizationsUpdated = unitOfWork.CoreOrganizationsUpdatedRepository.Find(c => c.stub_ref == org_updated.stub_ref).FirstOrDefault();
+
+                organizationsUpdated.is_change_address = org_updated.is_change_address;
+                //organizationsUpdated.is_premise_ready = org_updated.is_premise_ready;
+
                 unitOfWork.CoreOrganizationsUpdatedRepository.TourlistContext.Entry(organizationsUpdated).State = EntityState.Modified;
                 unitOfWork.Complete();
 

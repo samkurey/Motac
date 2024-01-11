@@ -53,7 +53,9 @@ namespace TourlistDataLayer.Persistence
         public virtual DbSet<ref_sequence> Sequence { get; set; }
         public virtual DbSet<core_acknowledgements> Acknowledgements { get; set; }
         public virtual DbSet<ilp_branches> IlpBranches { get; set; }
-        public virtual DbSet<ilp_branches_updated> IlpBranchesUpdated { get; set; } //added by samsuri on 28 Dec 2023
+        public virtual DbSet<tobtab_add_branches> TobtabBranches { get; set; } //added by samsuri (CR#57258) on 10 Jan 2024
+        public virtual DbSet<tobtab_add_branches_updated> TobtabBranchesUpdated { get; set; } //added by samsuri (CR#57258) on 10 Jan 2024
+        public virtual DbSet<ilp_branches_updated> IlpBranchesUpdated { get; set; } //added by samsuri (CR#57259) on 28 Dec 2023
         public virtual DbSet<ilp_permits> IlpPermits { get; set; }
         public virtual DbSet<ref_references> References { get; set; }
         public virtual DbSet<ref_information> RefInformation { get; set; }

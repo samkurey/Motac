@@ -11,7 +11,6 @@ using System.Globalization;
 using System.Data.Entity;
 using TourlistDataLayer.ViewModels.Ilp;
 using TourlistDataLayer.ViewModels.Tobtab;
-using System.Security.Policy;
 
 namespace TourlistBusinessLayer.BLL
 {
@@ -896,7 +895,6 @@ namespace TourlistBusinessLayer.BLL
             return unitOfWork.IlpBranches.UpdateIlpBranch(branch);
         }
 
-        
         public List<ILPBranch> GetIlpBranches(Guid application_ref)
         {
             var ilpBranches = new List<ILPBranch>();
@@ -942,12 +940,12 @@ namespace TourlistBusinessLayer.BLL
             return ilpBranches;
         }
 
-        //added by samsuri on 2 jan 2024
-        public List<ILPBranch> GetIlpBranchesActive(Guid application_ref)
+        //added by samsuri (CR#57259)  on 2 jan 2024
+        public List<ILPBranch> GetIlpBranchesActive(Guid Org_ref)
         {
             var ilpBranches = new List<ILPBranch>();
-            var datas = unitOfWork.IlpBranches.GetIlpBranchesActiveByApplicationRef(application_ref);
-            
+            var datas = unitOfWork.IlpBranches.GetIlpBranchesByOrgID(Org_ref);
+
             foreach (var data in datas)
             {
                 ILPBranch ilpBranch = new ILPBranch();
@@ -965,11 +963,11 @@ namespace TourlistBusinessLayer.BLL
                 ilpBranch.branch_fax_no = data.branch_fax_no;
                 ilpBranch.branch_size = data.branch_size;
                 ilpBranch.branch_email = data.branch_email;
-                ilpBranch.utility = (Guid)data.utility;
+                ilpBranch.utility = data.utility != null ? (Guid)data.utility : Guid.Empty; //modified b samsuri on 8 jan 2024
                 ilpBranch.utility_others = data.utility_others;
                 ilpBranch.branch_website = data.branch_website;
-                ilpBranch.authorized_capital = (Decimal)data.authorized_capital;
-                ilpBranch.paid_capital = (Decimal)data.paid_capital;
+                ilpBranch.authorized_capital = data.authorized_capital != null ? (Decimal)data.authorized_capital : 0; //modified b samsuri on 8 jan 2024
+                ilpBranch.paid_capital = data.paid_capital != null ? (Decimal)data.paid_capital : 0; //modified b samsuri on 8 jan 2024
                 ilpBranch.ilp_license_idx = data.ilp_license_idx;
                 ilpBranch.pbt_ref = data.pbt_ref;
 
@@ -977,29 +975,43 @@ namespace TourlistBusinessLayer.BLL
                 var guidActive = statusRecord != null ? statusRecord.status_name : "";
                 if (guidActive == "ACTIVE") ilpBranch.active_status = data.active_status;
 
-                var utilities = unitOfWork.IlpMultiSelects.GetMultiSelectsByParentRef((Guid)data.utility);
-                var multiUtilities = new List<ILPMultiSelect>();
-                foreach (var utility in utilities)
+                //modified b samsuri on 8 jan 2024
+                if (ilpBranch.utility != Guid.Empty)
                 {
-                    ILPMultiSelect multiUtility = new ILPMultiSelect();
-                    multiUtility.parent_ref = utility.parent_ref;
-                    multiUtility.details_ref = utility.details_ref;
-                    multiUtility.details_name = unitOfWork.RefReferencesRepository.GetReferenceByIdx((Guid)utility.details_ref).ref_description;
-                    multiUtilities.Add(multiUtility);
+                    var utilities = unitOfWork.IlpMultiSelects.GetMultiSelectsByParentRef((Guid)data.utility);
+                    var multiUtilities = new List<ILPMultiSelect>();
+                    foreach (var utility in utilities)
+                    {
+                        ILPMultiSelect multiUtility = new ILPMultiSelect();
+                        multiUtility.parent_ref = utility.parent_ref;
+                        multiUtility.details_ref = utility.details_ref;
+                        multiUtility.details_name = unitOfWork.RefReferencesRepository.GetReferenceByIdx((Guid)utility.details_ref).ref_description;
+                        multiUtilities.Add(multiUtility);
+                    }
+                    ilpBranch.multi_utility = multiUtilities;
                 }
-                ilpBranch.multi_utility = multiUtilities;
+
                 ilpBranches.Add(ilpBranch);
             }
             return ilpBranches;
         }
+        //added by samsuri (CR#57259) on 10 jan 2024
+        private Guid GetILPBranchUploadedDoc(string code, Guid stubRef)
+        {
+            var ilpLicense = unitOfWork.IlpLicenses.Find(c => (c.stub_ref == stubRef)).FirstOrDefault();
+            var coreChklstLists = unitOfWork.CoreChklstListsRepository.Find(c => (c.chklist_code.ToString() == "ILP_TUKAR_STATUS_DOKUMEN")).FirstOrDefault();
+            var coreChkLstItems = unitOfWork.CoreChklstItemsRepository.Find(c => (c.chklist_ref == coreChklstLists.chklist_idx && c.descr_string1 == code)).FirstOrDefault();
+            var coreChkitemsInstances = unitOfWork.CoreChkItemsInstancesRepository.Find(c => (c.chklist_instance_ref == ilpLicense.supporting_document_list && c.chklist_tplt_item_ref == coreChkLstItems.item_idx)).FirstOrDefault();
+            if (coreChkitemsInstances == null) return Guid.Empty;
+            return coreChkitemsInstances.chkitem_instance_idx;
+        }
 
-        //Added By samsuri on 2 Jan 2024
+        //Added by samsuri (CR#57259)  on 2 Jan 2024
         public List<ILPBranch> GetIlpBranchesbyBranchIdx(Guid Branch_Idx)
         {
             var ilpBranches = new List<ILPBranch>();
-            //var ilpBranchUpdated = new List<ILPBranchUpdated>();
             var datas = unitOfWork.IlpBranches.GetIlpBranchesByBranchIdx(Branch_Idx);
-            
+
             foreach (var data in datas)
             {
                 ILPBranch ilpBranch = new ILPBranch();
@@ -1017,25 +1029,45 @@ namespace TourlistBusinessLayer.BLL
                 ilpBranch.branch_fax_no = data.branch_fax_no;
                 ilpBranch.branch_size = data.branch_size;
                 ilpBranch.branch_email = data.branch_email;
-                ilpBranch.utility = (Guid)data.utility;
+                ilpBranch.utility = data.utility != null ? (Guid)data.utility : Guid.Empty; //modified b samsuri on 8 jan 2024
                 ilpBranch.utility_others = data.utility_others;
                 ilpBranch.branch_website = data.branch_website;
-                ilpBranch.authorized_capital = (Decimal)data.authorized_capital;
-                ilpBranch.paid_capital = (Decimal)data.paid_capital;
-                ilpBranch.ilp_license_idx = data.ilp_license_idx;
+                ilpBranch.authorized_capital = data.authorized_capital != null ? (Decimal)data.authorized_capital : 0; //modified b samsuri on 8 jan 2024
+                ilpBranch.paid_capital = data.paid_capital != null ? (Decimal)data.paid_capital : 0; //modified b samsuri on 8 jan 2024
+                var ilpBranchLic = unitOfWork.IlpLicenses.GetIlpLicenseByIdx(data.ilp_license_idx);
+                ilpBranch.ilp_license_idx = ilpBranchLic.stub_ref; //use for upload docs
                 ilpBranch.pbt_ref = data.pbt_ref;
 
-                var utilities = unitOfWork.IlpMultiSelects.GetMultiSelectsByParentRef((Guid)data.utility);
-                var multiUtilities = new List<ILPMultiSelect>();
-                foreach (var utility in utilities)
+                var chkitem_instanceSewaBeliPremis = GetILPBranchUploadedDoc("SEWABELI", ilpBranchLic.stub_ref);//"Perjanjian Sewa Beli Premis"
+                var perjanjianSewaBeliPremis = unitOfWork.CoreChkItemsInstancesRepository.Find(c => c.chkitem_instance_idx == chkitem_instanceSewaBeliPremis).FirstOrDefault();
+                ilpBranch.fileNameSewaBeliPremis = perjanjianSewaBeliPremis == null ? "" : perjanjianSewaBeliPremis.string1;
+                ilpBranch.fileLocSewaBeliPremis = perjanjianSewaBeliPremis == null ? "" : perjanjianSewaBeliPremis.upload_location;
+
+                var chkitem_instancePelanLantai = GetILPBranchUploadedDoc("PELANLANTAI", ilpBranchLic.stub_ref);//"Pelan Lantai Premis Perniagaan"
+                var pelanLantaiPremisPerniagaan = unitOfWork.CoreChkItemsInstancesRepository.Find(c => c.chkitem_instance_idx == chkitem_instancePelanLantai).FirstOrDefault();
+                ilpBranch.fileNamepelanLantai = pelanLantaiPremisPerniagaan == null ? "" : pelanLantaiPremisPerniagaan.string1;
+                ilpBranch.fileLocpelanLantai = pelanLantaiPremisPerniagaan == null ? "" : pelanLantaiPremisPerniagaan.upload_location;
+
+                var chkitem_instanceGambar = GetILPBranchUploadedDoc("GAMBAR", ilpBranchLic.stub_ref);//"Gambar Bahagian Dalam dan Luar Pejabat (Berwarna)"
+                var gambar = unitOfWork.CoreChkItemsInstancesRepository.Find(c => c.chkitem_instance_idx == chkitem_instanceGambar).FirstOrDefault();
+                ilpBranch.fileNameGambarPermis = gambar == null ? "" : gambar.string1;
+                ilpBranch.fileLocGambarPermis = gambar == null ? "" : gambar.upload_location;
+
+                //modified b samsuri on 8 jan 2024
+                if (ilpBranch.utility != Guid.Empty)
                 {
-                    ILPMultiSelect multiUtility = new ILPMultiSelect();
-                    multiUtility.parent_ref = utility.parent_ref;
-                    multiUtility.details_ref = utility.details_ref;
-                    multiUtility.details_name = unitOfWork.RefReferencesRepository.GetReferenceByIdx((Guid)utility.details_ref).ref_description;
-                    multiUtilities.Add(multiUtility);
+                    var utilities = unitOfWork.IlpMultiSelects.GetMultiSelectsByParentRef((Guid)data.utility);
+                    var multiUtilities = new List<ILPMultiSelect>();
+                    foreach (var utility in utilities)
+                    {
+                        ILPMultiSelect multiUtility = new ILPMultiSelect();
+                        multiUtility.parent_ref = utility.parent_ref;
+                        multiUtility.details_ref = utility.details_ref;
+                        multiUtility.details_name = unitOfWork.RefReferencesRepository.GetReferenceByIdx((Guid)utility.details_ref).ref_description;
+                        multiUtilities.Add(multiUtility);
+                    }
+                    ilpBranch.multi_utility = multiUtilities;
                 }
-                ilpBranch.multi_utility = multiUtilities;
 
                 var datasUpdated = unitOfWork.IlpBranches.GetIlpBranchesUpdatedByBranchIdx(Branch_Idx);
                 var ilpBranchUpdated = new List<ILPBranchUpdated>();
@@ -1064,13 +1096,6 @@ namespace TourlistBusinessLayer.BLL
             }
             return ilpBranches;
         }
-
-        ////added by samsuri on 2 jan 2024
-        //public string GetStateNameByStateIdx(Guid stateIdx)
-        //{
-        //    var stateName = unitOfWork.RefGeoStatesRepository.Find(i => (i.state_idx == stateIdx)).FirstOrDefault();
-        //    return stateName.state_idx.ToString();
-        //}
 
         public List<ILPBranch> GetIlpBranchesByUser(Guid user_idx)
         {

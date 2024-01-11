@@ -10,7 +10,7 @@ namespace TourlistBusinessLayer.Models
     {
         public Guid ilp_branch_idx;
         public Guid ilp_license_idx;
-        public String branch_name; //added by Samsuri on 27 Dec 2023
+        public String branch_name; //added by samsuri (CR#57259)  on 27 Dec 2023
         public String branch_addr_1;
         public String branch_addr_2;
         public String branch_addr_3;
@@ -32,6 +32,17 @@ namespace TourlistBusinessLayer.Models
         public Decimal paid_capital;
         public List<ILPMultiSelect> multi_utility;
         public Guid? pbt_ref;
-        public List<ILPBranchUpdated> branch_updated; //added by samsuri on 3 jan 2024
+
+        //added by samsuri (CR#57259)  on 3 jan 2024
+        public List<ILPBranchUpdated> branch_updated; 
+        public String fileNameSewaBeliPremis;
+        public String fileLocSewaBeliPremis;
+        public String fileNamepelanLantai;
+        public String fileLocpelanLantai;
+        public String fileNameGambarPermis;
+        public String fileLocGambarPermis;
+
+
+
     }
 }

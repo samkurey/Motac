@@ -89,7 +89,10 @@
         <input hidden type="text" id="chkitem_instance_idx" name="chkitem_instance_idx" value='@ViewBag.chkitem_instance_idx' />
         <input hidden type="text" id="application_ref" name="application_ref" value='@ViewBag.application_ref' />
         <input hidden type="text" id="license_type" name="license_type" value='@ViewBag.license_type' />
-        <input hidden type="text" id="ilp_branch_idx" name="ilp_branch_idx" value='' /> @* Added by samsuri on 2 Ja n2024 *@
+        <input hidden type="text" id="ilp_branch_idx" name="ilp_branch_idx" value='' /> @* Added by samsuri (CR#57259)  on 2 Jan 2024 *@
+        <input hidden type="text" id="is_premise_ready" name="is_premise_ready" value='' /> @* Added by samsuri (CR#57259)  on 8 Jan 2024 *@
+        <input hidden type="text" id="ilp_Branch_Lic_Stub_idx" name="ilp_Branch_Lic_Stub_idx" value='' /> @* Added by samsuri (CR#57259)  on 8 Jan 2024 *@
+        
         
 
         <button hidden style="padding-right:1em" data-dismiss="modal" type="submit" id="btnSaveOrgUpdate1" value="Add" class="btn btn-primary pull-right">
@@ -250,7 +253,7 @@
                             <div id="menuTwo" class="panel-collapse collapse">
                                 <div class="panel-body">
                                 
-                                @* Added by Samsuri on 27 Dec 2023, CR57259 -Start *@
+                                @* Added by samsuri (CR#57259)  on 27 Dec 2023, CR57259 -Start *@
                                 @* @Html.RadioButton("CompanyAdd","HQ") HQ
                                 @Html.RadioButton("CompanyAdd","Cawangan") Cawangan *@
                                 <div class="block--card main-metrics dir-ver">
@@ -264,7 +267,8 @@
                                     <div class="form-check form-check-inline">
                                     <input class="form-check-input" onclick="radCawanganType(); getCawanganList();"  type="radio" value="" id="AlamatSyarikatCaw" name="AlamatSyarikat">
                                     <label class="form-check-label" for="flexCheckChecked">
-                                        Cawangan
+                                        Cawangan 
+                                        @* [AppID=@ViewBag.AppID OrgID=@ViewBag.OrgID] *@
                                     </label>
                                     </div>
                                 </div>
@@ -279,7 +283,7 @@
                                     </div>
                                 </div>
                                 </div>
-                                @* Added by Samsuri on 27 Dec 2023, CR57259 -End *@
+                                @* Added by samsuri (CR#57259)  on 27 Dec 2023, CR57259 -End *@
 
 
                                     <div class="block--card main-metrics dir-ver">
@@ -344,7 +348,7 @@
                                             </div>
                                             :
                                             <div class="col-3">
-                                                <input type="text" readonly style="background-color:lightgray" id="syarikat_poskod" name="syarikat_poskod" class="form-control" value="" maxlength="5"/>
+                                                <input type="text" readonly style="background-color:lightgray" id="syarikat_poskod" name="syarikat_poskod" class="form-control" value="" maxlength="5" />
                                             </div>
                                             <div class="col-2">
                                                 Poskod
@@ -367,7 +371,7 @@
                                             :
                                             <div class="col-3">
                                                 <input type="text" readonly style="background-color:lightgray" id="syarikat_bandar" name="syarikat_bandar" class="form-control" value="" />
-                                                 <input type="text" hidden id="Daerah_idx" name="Daerah_idx" class="form-control" value="" /> @*Added by Samsuri on 29 De 2023 *@
+                                                 <input type="text" hidden id="Daerah_idx" name="Daerah_idx" class="form-control" value="" /> @*Added by samsuri (CR#57259)  on 29 De 2023 *@
                                             </div>
                                             <div class="col-2">
                                                 Bandar/Daerah
@@ -400,8 +404,9 @@
                                             </div>
                                         </div>
                                         <br />
-
-                                         <div class="row" id="DivPremisDocMain"> @*Modified by samsuri on 3 jan 2024 *@
+                                        
+                                        <div id="DivPremisDocMain">  @*added by samsuri (CR#57259)  on 3 jan 2024 *@
+                                         <div class="row" >
                                             <div class="col-2">
                                             </div>
                                             <div class="col-3">
@@ -431,8 +436,7 @@
                                                 </div>
                                                 <br />
                                             </div>
-
-
+                                        </div>
                                         </div>
 
                                         <div id="DivPremisDoc">
@@ -611,33 +615,33 @@
                             <div id="menuFour" class="panel-collapse collapse">
 
                                 @*<div class="block--card main-metrics dir-ver">
-                                    <div class="row">
-
-                                        <div class="col-4">
-                                            Perakuan Pendaftaran Syarikat dan lesen (SSM yang lama )<font color="Red"> *</font>
-                                        </div>
-                                        :<font color="white">__</font>
-                                        <div class="col-3 custom-file">
-
-                                            <input type="file" class="custom-file-input" name="file_PerakuanPendaftar" id="file_PerakuanPendaftar" />
-                                            <label class="custom-file-label" for="customFile">Choose file</label>
-                                        </div>
-
-                                    </div>
-
-                                    <div id="PerakuanPendaftarDownload">
                                         <div class="row">
 
                                             <div class="col-4">
-                                                <div id="divdownloadPerakuanPendaftar" class="custom-file">
-                                                    <a href="javascript:downloadFile('PerakuanPendaftar');"><font color="blue" style="font-weight:bold">Muat Turun Perakuan Pendaftaran Syarikat dan lesen (SSM yang lama )</font></a>
+                                                Perakuan Pendaftaran Syarikat dan lesen (SSM yang lama )<font color="Red"> *</font>
+                                            </div>
+                                            :<font color="white">__</font>
+                                            <div class="col-3 custom-file">
+
+                                                <input type="file" class="custom-file-input" name="file_PerakuanPendaftar" id="file_PerakuanPendaftar" />
+                                                <label class="custom-file-label" for="customFile">Choose file</label>
+                                            </div>
+
+                                        </div>
+
+                                        <div id="PerakuanPendaftarDownload">
+                                            <div class="row">
+
+                                                <div class="col-4">
+                                                    <div id="divdownloadPerakuanPendaftar" class="custom-file">
+                                                        <a href="javascript:downloadFile('PerakuanPendaftar');"><font color="blue" style="font-weight:bold">Muat Turun Perakuan Pendaftaran Syarikat dan lesen (SSM yang lama )</font></a>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
 
 
-                                </div>*@
+                                    </div>*@
                                 <br />
 
                                 <div class="block--card main-metrics dir-ver">
@@ -717,7 +721,7 @@
                                                                                 @String.Format("{0:0.00}", sh.number_of_shares_string)
                                                                             </td>
                                                                             <td>
-                                                                               
+
                                                                                 @String.Format("{0:0.00}", sh.share_percentage)
                                                                             </td>
                                                                             <td hidden>
@@ -1893,10 +1897,11 @@
             if ("@isDisabled" == "true") {
                 notEditable();
             }
-
+            
             var url = "/Tobtab/ajaxOrganizationUpdate";
 
             var AppID = $("#AppID").val();
+            
 
             $.ajax({
                 type: 'POST',
@@ -1918,7 +1923,7 @@
 
                             $("#syarikat_poskod").val(data[x].old_postcode);
                             $("#syarikat_bandar").val(data[x].old_city);
-                            $("#Daerah_idx").val(data[x].old_city_idx); //added by Samsuri on 2 Jan 2024
+                            $("#Daerah_idx").val(data[x].old_city_idx); //added by samsuri (CR#57259)  on 2 Jan 2024
                             $("#syarikat_negeri").val(data[x].old_state);
                             $("#pendaftaranSyarikat_ModalBerbayar").val(data[x].old_paid_capital.toLocaleString("en-US"));
                             //NEW
@@ -1968,17 +1973,11 @@
                             $("#fileLocSSM").val(data[x].fileLocSSM);
                             $("#fileNameSSM").val(data[x].fileSSM);
 
-                            //if (uploadnameSSM != null && uploadnameSSM != "") {
-                            //    document.getElementById('PerakuanPendaftarDownload').style.display = 'block';
-                            //}
-                            //else {
-                            //    document.getElementById('PerakuanPendaftarDownload').style.display = 'none';
-                            //}
 
                             var uploadnamePic = data[x].fileNameGambarPermis;
                             $("#FilelocGambarPermis").val(data[x].FilelocGambarPermis);
                             $("#fileNameGambarPermis").val(data[x].fileNameGambarPermis);
-                           
+
                             if (uploadnamePic != null && uploadnamePic != "") {
                                 document.getElementById('divdownloadGambarPermis').style.display = 'block';
                             }
@@ -2047,7 +2046,14 @@
                                 chkAhliLembagaPengarah.checked = false;
                             }
 
-                            if (data[x].is_premise_ready == 1) {
+                            toggleTukarStatus();
+
+                            //added by samsuri (CR#57259)  on 8 jan 2024
+                            var new_addr_1_chk = data[x].new_addr_1;
+                            //$("#is_premise_ready").val(data[x].is_premise_ready);
+
+                            //modified by samsuri (CR#57259)  on 8 jan 2024
+                            if (data[x].is_premise_ready == 1 && new_addr_1_chk != null && $("#AlamatSyarikatHQ").is(':checked')) {
                                 chkPremisDocTrue.checked = true;
                                 chkPremisDocFalse.checked = false;
                                 document.getElementById('DivPremisDoc').style.display = 'block';
@@ -2059,7 +2065,7 @@
                             }
                             //JustifikasiNama
 
-                            toggleTukarStatus();
+                            
                         }
 
                     }
@@ -2068,9 +2074,14 @@
             });
             $("#btnSaveOrgUpdate").click(function (e) {
 
-                var url = "";
+                //var url = "";
                 var url = "/ILP/ajaxChangeStatusUpdate"; //ILPController
               
+                //added by samsuri (CR#57259)  on 5 jan 2024
+                if ($("#AlamatSyarikatCaw").is(':checked')){
+                    url = "/ILP/ajaxChangeStatusBranchUpdate"; //ILPController
+                }
+
                 if ($("#chkNamaSyarikat").is(':checked')) {
 
                     var chkNamaSyarikat = 1;
@@ -2103,7 +2114,7 @@
                     var chkAhliLembagaPengarah = 0;
                 }
 
-                //added by samsuri on 2 jan 2024
+                //added by samsuri (CR#57259)  on 2 jan 2024
                 var cawlst = $('#CawanganList :selected').text();
                 if ($("#AlamatSyarikatCaw").is(':checked') && cawlst == "Sila Pilih") {
                     errorPopup("Sila buat pilihan cawangan");
@@ -2122,14 +2133,14 @@
                 var new_state = document.getElementById("Negeri_idx").value;
                 var new_paid_capital = document.getElementById("pendaftaranSyarikat_ModalBerbayarBaru").value;
                 var stub_ref = document.getElementById("AppID").value;
-
-                //added by samsuri on 3 jan 2024
+                
+                //added by samsuri (CR#57259)  on 3 jan 2024
                 if ($("#AlamatSyarikatCaw").is(':checked') && (new_addr_1.length < 1 || new_postcode.length < 5)) {
                     errorPopup("Sila masukkan Alamat Pejabat Baru");
                     return;
                 }
 
-                //added by samsuri on 28 Dec 2023 - start
+                //added by samsuri (CR#57259)  on 28 Dec 2023 - start
                 if ($("#AlamatSyarikatCaw").is(':checked')) {
                     var ilp_branches_idx = document.getElementById("ilp_branch_idx").value;
                     var old_addr_1 = document.getElementById("syarikat_AlamatBerdaftar").value;
@@ -2140,10 +2151,10 @@
                     //msgPopup(ilp_branches_idx);  
                     //return;                  
                     var old_state = document.getElementById("IDPSNegeriSyarikat_idx").value;
-                    var OrgID = document.getElementById("OrgID").value;
-                    
+                    //var OrgID = document.getElementById("OrgID").value;
+                    var branch_stub_ref = document.getElementById("ilp_Branch_Lic_Stub_idx").value; 
                 }
-                //added by samsuri on 28 Dec 2023 - end
+                //added by samsuri (CR#57259)  on 28 Dec 2023 - end
 
                 var formData = new FormData();
                 if (document.getElementById("chkPremisDocTrue").checked == true)
@@ -2152,8 +2163,9 @@
                     formData.append('is_premise_ready', 0);
                 }
 
-                //modified by samsuri on 28 Dec 2023
-                if ($("#AlamatSyarikatHQ").is(':checked')) {
+                
+                //modified by samsuri (CR#57259)  on 28 Dec 2023
+                //if ($("#AlamatSyarikatHQ").is(':checked')) {
                     formData.append("file_PerjanjianSewaBeliPermis", document.getElementById("file_PerjanjianSewaBeliPermis").files[0]);
                     formData.append("file_PelanLantaiPermis", document.getElementById("file_PelanLantaiPermis").files[0]);
                     formData.append("file_salinanAsalLesen", document.getElementById("file_salinanAsalLesen").files[0]);
@@ -2175,13 +2187,13 @@
                     formData.append('is_shareholder', chkPerubahanPemegangSaham);
                     formData.append('is_directors', chkAhliLembagaPengarah);
                     formData.append('itemID', itemIDX);
-                }
+                //}
 
-                //added by samsuri on 28 Dec 2023 - start
+                //added by samsuri (CR#57259)  on 28 Dec 2023 - start
                 if ($("#AlamatSyarikatCaw").is(':checked')) {
-                    formData.append('ilp_branches_idx', ilp_branches_idx);
-                    formData.append('ilp_license_idx', stub_ref);
-                    formData.append('organization_ref', OrgID);
+                    formData.append('ilp_add_branches_upd_idx', ilp_branches_idx);
+                    //formData.append('Is_change_address', 1);
+                    //formData.append('organization_ref', OrgID);
                     
                     formData.append('new_branch_addr_1', new_addr_1);
                     formData.append('new_branch_addr_2', new_addr_2);
@@ -2196,8 +2208,9 @@
                     formData.append('old_branch_postcode', old_postcode);
                     formData.append('old_branch_city', old_city);
                     formData.append('old_branch_state', old_state);
+                    formData.append('branch_stub_ref', branch_stub_ref);
                 }
-                //added by samsuri on 28 Dec 2023 - end
+                //added by samsuri (CR#57259)  on 28 Dec 2023 - end
 
                 $.ajax({
                     type: 'POST',
@@ -2205,19 +2218,22 @@
                     data: formData,
                     processData: false,
                     contentType: false,
-                    "success": function (data) {                       
-                        msgPopup("Berjaya!");
-                        // $('#PemegangSahamModal').modal('hide');
-                        //  addSubCriteria(data, Criteria_title_idx, Criteria_sub_title_idx);
+                    "success": function (data) {
+                        if (data == true) {
+                            msgPopup("@TourlistWeb.LocalResource.Common.Success");
+                        }
+                        else {
+                            errorPopup("@TourlistWeb.LocalResource.Common.Unsuccess");
+                        }
+                        $('#okBtn').unbind("click");
+                        $("#okBtn").click(function () {
+                            closePopup();
+                            window.location.reload();
+                        });
 
                     }
-                    
 
                 });
-
-                if ($("#AlamatSyarikatHQ").is(':checked')) {
-                    location.reload();
-                }
 
             });
 
@@ -2306,7 +2322,7 @@
 
                 var status = $("#status_director_" + id).val();
 
-                url = "/MM2H/ajaxChangeStatusDirectorDetail";
+                url = "/ILP/ajaxChangeStatusDirectorDetail";
                 /* IDX = $("#directorID_" + id).val();*/
 
                 $("#directorID").val(directorID);
@@ -2494,31 +2510,8 @@
                             }
 
 
-                            //$("#JustifikasiDirector").val(data[i].new_justification_name);
-                          
-                            //$("#JustifikasiDirector_").val(data[i].new_justification_id);
-
-                            //var f = document.getElementById("JustifikasiDirector_");
-
-                            //if (f.value != "") {
-                            //    var justificationText_ = f.options[f.selectedIndex].text;
-                              
-                            //    if (justificationText_ == "LAIN-LAIN") {
-                            //        document.getElementById('divJustOtherDirector').style.display = 'block';
-                            //        document.getElementById('divJustOtherDirector1').style.display = 'block';
-                                    
-                            //        $("#JustifikasiDirector").val(data[i].new_justification_name);
-                            //    }
-                            //    else {
-                            //        document.getElementById('divJustOtherDirector').style.display = 'none';
-                            //        document.getElementById('divJustOtherDirector1').style.display = 'none';
-                            //    }
-                            //}
-
-
                             $("#locationFileJustDirector").val(data[i].locationFileDirector);
                             $("#fileNameJustDirector").val(data[i].fileNameDirector);
-
                             var uploadnameDirector = data[i].fileNameDirector;
 
                             if (uploadnameDirector != null && uploadnameDirector != "") {
@@ -2530,8 +2523,8 @@
                             }
 
 
-                            $("#locationFileDirector").val(data[i].locationFileDirector);
-                            $("#fileNameDirector").val(data[i].fileNameDirector);
+                            $("#locationFileDirector").val(data[i].locationFile);
+                            $("#fileNameDirector").val(data[i].fileName);
 
                             var uploadname = data[i].fileName;
 
@@ -2587,8 +2580,8 @@
                                         document.getElementById('divJustOtherDirector').style.display = 'block';
                                         document.getElementById('divJustOtherDirector1').style.display = 'block';
                                         $("#JustificationDirector").val(data[i].new_justification_name);
-                                        
-                                      
+
+
                                     }
                                     else {
                                         document.getElementById('divJustOtherDirector').style.display = 'none';
@@ -2655,7 +2648,7 @@
                 var url = "/MM2H/ajaxDirectorDetail";
                 var id = $(this).parent().parent().attr('id');
 
-                var identifier = $("#pengarah_identifier_" + id).val();
+                var identifier = $("#organization_director_idx_" + id).val();
 
                 document.getElementById('pemegangSahamAdd').style.display = 'none';
                 document.getElementById('bknNamaPemegangShare').style.display = 'block';
@@ -3270,7 +3263,7 @@
 
 
                 var url = "";
-                var url = "/MM2H/ajaxChangeStatusShareholderPersonUpdate";
+                var url = "/ILP/ajaxChangeStatusShareholderPersonUpdate";
 
                 var person_name = document.getElementById("IDPSNama").value;
                 var person_identifier = document.getElementById("IDPSNoKP").value;
@@ -3349,21 +3342,17 @@
                     "success": function (data) {
 
                         if (data == true) {
-                            msgPopup("Berjaya!");
-                            $('#okBtn').unbind("click");
-                            $("#okBtn").click(function () {
-                                closePopup();
-                                window.location.reload();
-                            });
+                            msgPopup("@TourlistWeb.LocalResource.Common.Success");
                         }
                         else {
-                            errorPopup("Tidak Berjaya!");
-                            $('#okBtn').unbind("click");
-                            $("#okBtn").click(function () {
-                                closePopup();
-                                window.location.reload();
-                            });
+                            errorPopup("@TourlistWeb.LocalResource.Common.Unsuccess");
                         }
+
+                        $('#okBtn').unbind("click");
+                        $("#okBtn").click(function () {
+                            closePopup();
+                            window.location.reload();
+                        });
 
 
                         $('#PemegangSahamModal').modal('hide');
@@ -3384,7 +3373,7 @@
                 //}
 
                 var url = "";
-                var urlPerson = "/MM2H/ajaxChangeStatusShareholderAdd";
+                var urlPerson = "/ILP/ajaxChangeStatusShareholderAdd";
                 var person_name = document.getElementById("IDPSNama").value;
                 var person_identifier = document.getElementById("IDPSNoKP").value;
                 var contact_mobile_no = document.getElementById("IDPSHpNo").value;
@@ -3411,12 +3400,12 @@
                 //   var OrganizationID = document.getElementById("OrganizationID").value;
                 // var file_MyKad = document.getElementById("file_MyKad").value;
                 var typeFile = "MYKAD";
-                if (organization_idx != "") {
-                    url = urlOrganization;
-                }
-                else {
+                //if (organization_idx != "") {
+                //    url = urlOrganization;
+                //}
+                //else {
                     url = urlPerson;
-                }
+                //}
 
                 var formData = new FormData();
                 formData.append("file_MyKad", document.getElementById("file_MyKadSH").files[0]);
@@ -3474,7 +3463,7 @@
                 }
 
                 var url = "";
-                var urlOrg = "/MM2H/ajaxChangeStatusShareholderOrgUpdate";
+                var urlOrg = "/ILP/ajaxChangeStatusShareholderOrgUpdate";
 
                 var nama_syarikat = document.getElementById("IDPSNamaSyarikat").value;
                 var no_daftar = document.getElementById("IDPSNoDaftarSyarikat").value;
@@ -3494,6 +3483,7 @@
                 var OrgID = document.getElementById("orgID").value;
                 var number_of_shares = document.getElementById("IDNilaiSaham").value;
                 var e = document.getElementById("StatusPemegangSahamOrganization_");
+
                 var PemegangSahamText_ = e.options[e.selectedIndex].text;
                 var Malaysia_ = $("#Malaysia").val();
 
@@ -3563,6 +3553,7 @@
                         $("#okBtn").click(function () {
                             closePopup();
                             window.location.reload();
+
                         });
                         $('#PemegangSahamModal').modal('hide');
 
@@ -3661,10 +3652,38 @@
 
             $("#tblPemegangSahamAsal").on('click', '.AddPemegangSaham', function () {
 
-                var url = "/MM2H/ajaxShareHolderDetail";
+               // var url = "/ILP/ajaxShareHolderDetail";
                 var id = $(this).parent().parent().attr('id');
 
                 var identifier = $("#identifier_" + id).val();
+
+               // var personIDX_ = $("#personIDX_" + id).val();
+
+                var type_ = $("#typeShareholder_" + id).val();
+
+                var status = $("#status_" + id).val();
+                $("#statusShareholder").val(status);
+
+                var url = "";
+                var IDX = "";
+                if (type_ == "Person") {
+                    url = "/ILP/ajaxShareHolderDetail";
+                    IDX = identifier;
+                    //IDX = $("#personIDX_" + id).val();
+                    //$("#personID").val(IDX);
+                    //document.getElementById('btnSavePerson').style.display = 'block';
+                    //document.getElementById('btnAddPerson').style.display = 'none';
+
+                }
+                else {
+                    url = "/ILP/ajaxShareHolderDetailByID";
+                    IDX = $("#orgIDX_" + id).val();
+
+                    //document.getElementById('btnSaveOrganization').style.display = 'block';
+                    //document.getElementById('btnAddOrganization').style.display = 'none';
+                }
+
+
 
                 var type_ = $("#type_" + id).val();
 
@@ -3676,12 +3695,13 @@
 
                 $("#IDPSHpNo").val("");
                 $("#IDPSNoDaftarSyarikat").val("");
+
                 disabledShareholderPerson(type_);
 
                 $.ajax({
                     url: url,
                     type: "POST",
-                    data: { identifier: identifier, },
+                    data: { identifier: IDX, },
                     success: function (data) {
                         for (var i = 0; i < data.length; i++) {
 
@@ -4119,7 +4139,11 @@
                                         document.getElementById('divJustifyOrg').style.display = 'none';
                                         document.getElementById('justification').style.display = 'block';
                                         //      document.getElementById('divdownloadJustPerson').style.display = 'none';
-
+                                        document.getElementById("chkKemaskinitrue").checked = true;
+                                        document.getElementById("chkKemaskinifalse").checked = false;
+                                        document.getElementById('divJustifyPerson').style.display = 'none';
+                                        document.getElementById('divJustifyOrg').style.display = 'none';
+                                        document.getElementById('justification').style.display = 'block';
                                     }
                                     else {
                                         document.getElementById("chkKemaskinitrue").checked = false;
@@ -4556,7 +4580,7 @@
                                 tr = tr + "<td>" + '<a href="javascript:void(0);" class="remove"><i class="fa fa-trash" style="width:10%"></i></a>' + "</td>";
                             }
                         }
-                        tr = tr + "<td hidden><input hidden name=identifier type=text id=identifier_" + i + " value=" + data[i].shareholder_identifier + " /></td>";
+                        tr = tr + "<td hidden><input name=identifier type=text id=identifier_" + i + " value=" + data[i].shareholder_identifier + " /></td>";
                         tr = tr + "<td hidden><input  name=type type=text id=typeShareholder_" + i + " value=" + type_ + "></td>";
                         tr = tr + "<td hidden><input  name=status type=text id=status_" + i + " value=" + data[i].shareholder_status+ "></td>";
                         tr = tr + "<td hidden><input  name=person type=text id=personIDX_" + i + " value=" + data[i].person_upd_idx + "></td>";
@@ -4588,16 +4612,129 @@
             });
         }
         
-        //added by Samsuri on 27 Dec 2023
+        //added by samsuri (CR#57259)  on 27 Dec 2023
+        function loadHQ(){
+            
+            var url = "/Tobtab/ajaxOrganizationUpdate";
+
+            var AppID = $("#AppID").val();
+
+            $.ajax({
+                type: 'POST',
+                url: url, // Url.Action()
+                data: {
+                    AppID: AppID,
+                    module: "ilp",
+                },
+                "success": function (data) {
+
+                    if (data != null) {
+                        for (var x = 0; x < data.length; x++) {
+                            //OLD
+                            
+                            $("#syarikat_AlamatBerdaftar").val(data[x].old_addr_1);
+                            $("#syarikat_AlamatBerdaftar1").val(data[x].old_addr_2);
+                            $("#syarikat_AlamatBerdaftar2").val(data[x].old_addr_3);
+
+                            $("#syarikat_poskod").val(data[x].old_postcode);
+                            $("#syarikat_bandar").val(data[x].old_city);
+                            $("#Daerah_idx").val(data[x].old_city_idx); //added by samsuri (CR#57259)  on 2 Jan 2024
+                            $("#syarikat_negeri").val(data[x].old_state);
+                            
+                            //NEW
+                            $("#syarikat_AlamatBerdaftarBaru").val(data[x].new_addr_1);
+                            $("#syarikat_AlamatBerdaftar1Baru").val(data[x].new_addr_2);
+                            $("#syarikat_AlamatBerdaftar2Baru").val(data[x].new_addr_3);
+
+                            $("#syarikat_poskod_baru").val(data[x].new_postcode);
+                            $("#syarikat_bandarBaru").val(data[x].new_city);
+                            $("#syarikat_negeriBaru").val(data[x].new_state);
+
+                            var postcode2 = data[x].new_postcode;
+                            if (postcode2 != null) {
+                                loadTown(postcode2, 'syarikat_bandarBaru', 'New');
+                            }
+                            else{
+                                $("#syarikat_bandarBaru").empty();
+                            }
+
+                            $("#is_premise_ready").val(0);
+
+                            var uploadnameSB = data[x].fileNameSewaBeliPremis;
+                            $("#fileLocSewaBeliPremis").val(data[x].fileLocSewaBeliPremis);
+                            $("#fileNameSewaBeliPremis").val(data[x].fileNameSewaBeliPremis);
+                            if (uploadnameSB != null && uploadnameSB != "") {
+                                document.getElementById('divdownloadSewaBeli').style.display = 'block';
+                                $("#is_premise_ready").val(1);
+                            }
+                            else {
+                                document.getElementById('divdownloadSewaBeli').style.display = 'none';
+                            }
+
+                            var uploadnamePL = data[x].fileNamepelanLantai;
+                            $("#fileLocpelanLantai").val(data[x].fileLocpelanLantai);
+                            $("#fileNamepelanLantai").val(data[x].fileNamepelanLantai);
+                            if (uploadnamePL != null && uploadnamePL != "") {
+                                document.getElementById('divdownloadPelanLantai').style.display = 'block';
+                                $("#is_premise_ready").val(1);
+                            }
+                            else {
+                                document.getElementById('divdownloadPelanLantai').style.display = 'none';
+                            }
+
+                            var uploadnamePic = data[x].fileNameGambarPermis;
+                            $("#FilelocGambarPermis").val(data[x].FilelocGambarPermis);
+                            $("#fileNameGambarPermis").val(data[x].fileNameGambarPermis);                            
+                            if (uploadnamePic != null && uploadnamePic != "") {
+                                document.getElementById('divdownloadGambarPermis').style.display = 'block';
+                                $("#is_premise_ready").val(1);
+                            }
+                            else {
+                                document.getElementById('divdownloadGambarPermis').style.display = 'none';
+                            }
+
+                            //msgPopup("HQ:"+document.getElementById("syarikat_AlamatBerdaftarBaru").value);
+                            if (document.getElementById("is_premise_ready").value == 1 
+                                && document.getElementById("syarikat_AlamatBerdaftarBaru").value.length > 0
+                                && $("#AlamatSyarikatHQ").is(':checked')) {
+                                //msgPopup("true");
+                                chkPremisDocTrue.checked = true;
+                                chkPremisDocFalse.checked = false;
+                                document.getElementById('DivPremisDoc').style.display = 'block';
+                            }
+                            else {
+                                chkPremisDocTrue.checked = false;
+                                chkPremisDocFalse.checked = true;
+                                document.getElementById('DivPremisDoc').style.display = 'none';
+                            }
+
+                        }
+                    }
+                }
+
+            });
+
+            chkAlamatSyarikat.checked = true;
+            toggleTukarStatus();
+
+        }
+
+        //added by samsuri (CR#57259)  on 27 Dec 2023
         function getCawanganList()
         {
+            var OrgID = document.getElementById("OrgID").value;
+            //msgPopup("OrgID:"+OrgID);
+            //msgPopup("AppID:"+document.getElementById("AppID").value);
             var url = null;
             //url = "@Url.Action("ILPBranches", "ILP", new { application_ref = "7521180E-A8D0-4609-A4D9-7B67CE5A56E9" })";
-            url = "@Url.Action("ILPBranchesActive", "ILP", new { application_ref = ViewBag.application_ref })";
-            
+            //url = "@Url.Action("ILPBranchesActive", "ILP", new { application_ref = "51FE1374-B3E7-4F57-8C0D-67EA8FB2843F" })";
+            //url = "@Url.Action("ILPBranchesActive", "ILP", new { application_ref = ViewBag.application_ref })";
+            url = "@Url.Action("ILPBranchesActive", "ILP")";
+
             $.ajax({
             url: url,
             type: 'GET',
+            data: ({"Org_ref":OrgID}),
             success: function (result) {
                 datas = result[0].branches;
                 //console.log(datas);
@@ -4606,7 +4743,7 @@
               //show on drop down list
               $(datas).each(function() {
                     if(this.active_status != null) {
-                        $("#CawanganList").append($("<option></option>").val(this.ilp_branch_idx).html(this.branch_name));
+                        $("#CawanganList").append($("<option></option>").val(this.ilp_branch_idx).html(this.branch_name +" - "+document.getElementById("syarikat_NamaPenuh").value ));
                     }
                     
                 });
@@ -4622,12 +4759,12 @@
 
         }
 
-        //added by samsuri on 28 Dec 2023
+        //added by samsuri (CR#57259)  on 28 Dec 2023
         function showSelected(){     
             var cawlst_idx = $('#CawanganList').val();       
             var cawlst = $('#CawanganList :selected').text();
             //errorPopup(cawlst);
-            //msgPopup(cawlst_idx);
+            //msgPopup("Branch idx:"+cawlst_idx);
             
             //var url = "@Url.Action("ILPBranchesbyBranchIdx", "ILP", new { branches_idx = "11B13973-79AE-4604-BEEB-69EE794810B1" })";
             var url = "@Url.Action("ILPBranchesbyBranchIdx", "ILP")";
@@ -4647,7 +4784,8 @@
                     $("#syarikat_AlamatBerdaftar").val(this.branch_addr_1);
                     $("#syarikat_AlamatBerdaftar1").val(this.branch_addr_2);
                     $("#syarikat_AlamatBerdaftar2").val(this.branch_addr_3);
-
+                    $("#ilp_Branch_Lic_Stub_idx").val(this.ilp_license_idx);
+                    //msgPopup("ilp lic:"+this.ilp_license_idx);
                     $("#syarikat_poskod").val(this.branch_postcode);
                     loadTownOld(this.branch_postcode,"syarikat_bandar","old");
                     //$("#syarikat_bandar").val(this.branch_city);                    
@@ -4665,17 +4803,74 @@
                     $("#syarikat_bandarBaru").empty();
                     $("#syarikat_negeriBaru").val("");
                     
+                    //sewa beli
+                    //msgPopup("this.fileLocSewaBeliPremis:"+this.fileLocSewaBeliPremis);
+                    $("#is_premise_ready").val(0);
+                    var uploadnameSB = this.fileNameSewaBeliPremis;
+                    $("#fileLocSewaBeliPremis").val(this.fileLocSewaBeliPremis);
+                    $("#fileNameSewaBeliPremis").val(this.fileNameSewaBeliPremis);
+                    if (uploadnameSB != null && uploadnameSB != "") {
+                        document.getElementById('divdownloadSewaBeli').style.display = 'block';
+                        $("#is_premise_ready").val(1);
+                    }
+                    else {
+                        document.getElementById('divdownloadSewaBeli').style.display = 'none';
+                    }
+                    //pelan lantai
+                    var uploadnamePL = this.fileNamepelanLantai;
+                    $("#fileLocpelanLantai").val(this.fileLocpelanLantai);
+                    $("#fileNamepelanLantai").val(this.fileNamepelanLantai);
+                    if (uploadnamePL != null && uploadnamePL != "") {
+                        document.getElementById('divdownloadPelanLantai').style.display = 'block';
+                        $("#is_premise_ready").val(1);
+                    }
+                    else {
+                        document.getElementById('divdownloadPelanLantai').style.display = 'none';
+                    }
+                    //gambar premis
+                    //msgPopup("this.FileLocGambarPermis:"+this.fileLocGambarPermis);
+                    var uploadnamePic = this.fileNameGambarPermis;
+                    $("#FilelocGambarPermis").val(this.fileLocGambarPermis);
+                    $("#fileNameGambarPermis").val(this.fileNameGambarPermis);
+                    
+                    if (uploadnamePic != null && uploadnamePic != "") {
+                        document.getElementById('divdownloadGambarPermis').style.display = 'block';
+                        $("#is_premise_ready").val(1);
+                    }
+                    else {
+                        document.getElementById('divdownloadGambarPermis').style.display = 'none';
+                    }
+
+
                     //$(datas.branch_updated).each(function() {   
                     $.each(this.branch_updated, function (key, value) {              
-                              $("#syarikat_AlamatBerdaftarBaru").val(value.new_branch_addr_1);
-                              $("#syarikat_AlamatBerdaftar1Baru").val(value.new_branch_addr_2);
-                              $("#syarikat_AlamatBerdaftar2Baru").val(value.new_branch_addr_3);
-                              $("#syarikat_poskod_baru").val(value.new_branch_postcode);
-                              loadTown(value.new_branch_postcode,"syarikat_bandarBaru","New");                              
+                            $("#syarikat_AlamatBerdaftarBaru").val(value.new_branch_addr_1);
+                            $("#syarikat_AlamatBerdaftar1Baru").val(value.new_branch_addr_2);
+                            $("#syarikat_AlamatBerdaftar2Baru").val(value.new_branch_addr_3);
+                            $("#syarikat_poskod_baru").val(value.new_branch_postcode);
+                            loadTown(value.new_branch_postcode,"syarikat_bandarBaru","New");  
+
                             });
+
+                    //msgPopup("premise:"+document.getElementById("is_premise_ready").value + " add:"+document.getElementById("syarikat_AlamatBerdaftarBaru").value);                    
+                    if (document.getElementById("is_premise_ready").value == 1 
+                        && document.getElementById("syarikat_AlamatBerdaftarBaru").value.length > 0
+                        && $("#AlamatSyarikatCaw").is(':checked')) {
+                        
+                        chkPremisDocTrue.checked = true;
+                        chkPremisDocFalse.checked = false;
+                        document.getElementById('DivPremisDoc').style.display = 'block';
+                    }
+                    else {
+                        chkPremisDocTrue.checked = false;
+                        chkPremisDocFalse.checked = true;
+                        document.getElementById('DivPremisDoc').style.display = 'none';
+                    }
                     
 
                 });
+
+                
             },
             error: function (ex) {
                 var r = jQuery.parseJSON(response.responseText);
@@ -4687,20 +4882,29 @@
 
         }
 
-        //added by Samsuri on 27 Dec 2023
+        //added by samsuri (CR#57259)  on 27 Dec 2023
         function radCawanganType()
         {
             if ($("#AlamatSyarikatCaw").is(':checked')){
                 document.getElementById('CawanganList').disabled = false;
-                document.getElementById('DivPremisDocMain').style.display = 'none';
-                document.getElementById('DivPremisDoc').style.display = 'none';
+
+                //document.getElementById('DivPremisDocMain').style.display = 'none';
+                //document.getElementById('DivPremisDoc').style.display = 'none';
                 //document.getElementById('AlamatSyarikatHQ').checked = false;                 
             }
             
             if ($("#AlamatSyarikatHQ").is(':checked')) {
                 document.getElementById('CawanganList').disabled = true;
                 $("#CawanganList").empty();
-                location.reload();
+                //location.reload();
+
+                //document.getElementById('DivPremisDocMain').style.display = 'block';
+                //if ($("#chkPremisDocTrue").is(':checked')){
+                //    document.getElementById('DivPremisDoc').style.display = 'block';
+                //}
+
+                loadHQ();
+                
                // document.getElementById('AlamatSyarikatCaw').checked = false;                                 
             }
         }
@@ -4716,7 +4920,7 @@
             if ($("#chkAlamatSyarikat").is(':checked')) {
                 document.getElementById('AlamatSyarikat').style.display = 'block';
 
-                //added by Samsuri on 27 Dec 2023
+                //added by samsuri (CR#57259)  on 27 Dec 2023
                 if ($("#AlamatSyarikatHQ").is(':checked')) {
                     document.getElementById('CawanganList').disabled = true;                                    
                 }
@@ -4776,6 +4980,7 @@
                         tr = tr + "<td>" + data[i].person_identifier + "</td>";
 
                         tr = tr + "<td hidden><input id=pengarah_identifier_" + i + " value=" + data[i].person_identifier + " /></td>";
+                        tr = tr + "<td hidden><input id=organization_director_idx_" + i + " value=" + data[i].organization_director_idx + " /></td>";
                         tr = tr + "</tr>";
                         rowCount++;
 
@@ -4801,7 +5006,7 @@
 
             $("#tblDirectorBaru tbody tr").remove();
             var AppID = $("#AppID").val();
-           
+
             $.ajax({
 
                 url: url,
@@ -4873,7 +5078,8 @@
 
                     if (totalData == 1) {
                         var rows = "<option selected value = '" + item.town_idx + "' >" + item.town_name + " - " + item.district_name + "</option>";
-                        townID = item.town_code;                        
+                        townID = item.town_code;
+
                     } else {
                         var rows = "<option value = '" + item.town_idx + "' >" + item.town_name + " - " + item.district_name + "</option>";
                     }
@@ -4903,8 +5109,9 @@
         });
     }
 
-        function loadState(townID, stateid) {        
-            
+        function loadState(townID, stateid) {
+
+
         $.ajax({
             url: '@Url.Action("LoadDDLStateByTown", "Administration")',
             dataType: "json",
@@ -4939,7 +5146,7 @@
 
         }
 
-        //added by samsuri on 2 jan 2024
+        //added by samsuri (CR#57259)  on 2 jan 2024
         function loadTownOld(postcodeval, cityid,status) {
 
             var postcode = postcodeval.value;
@@ -4980,7 +5187,7 @@
         });
     }
 
-        //added by samsuri on 2 jan 2024
+        //added by samsuri (CR#57259)  on 2 jan 2024
         function loadStateOld(townID, stateid) {        
 
             //errorPopup(townID);
@@ -5298,7 +5505,7 @@
         }
         else if (FileName == "file_GambarPermis") {
             var fileName = $("#fileNameGambarPermis").val();
-            var Locationfile = $("#FilelocGambarPermis").val();           
+            var Locationfile = $("#FilelocGambarPermis").val();
         }
 
 
@@ -5627,7 +5834,7 @@
             });
 
             $('.collapse').collapse()
-            
+
             $("#JustifikasiPemegangSahamOther_").click(function (e) {
                 var e = document.getElementById("JustifikasiPemegangSahamOther_");
                 var PemegangSahamText_ = e.options[e.selectedIndex].text;
@@ -5663,10 +5870,10 @@
             });
 
             $("#JustifikasiDirector_").click(function (e) {
-              
+
                 var e = document.getElementById("JustifikasiDirector_");
                 var PemegangSahamText_ = e.options[e.selectedIndex].text;
-              
+
                 if (PemegangSahamText_ == "LAIN-LAIN") {
 
                     document.getElementById("divJustOtherDirector").style.display = 'block';
@@ -5781,7 +5988,7 @@
                 var e = document.getElementById("CountryList_");
                 var nationality_ = e.options[e.selectedIndex].text;
 
-                if (nationality_ != "Malaysia") {
+                if (nationality_ != "MALAYSIA") {
                     // document.getElementById('passpengajiandownload').style.display = 'block';
                     document.getElementById('passpengajianDirector').style.display = 'block';
                 }
@@ -5798,7 +6005,7 @@
                 var identifier = document.getElementById("PemegangSaham_").value;
 
                 urlDirector = "/MM2H/ajaxDirectorDetail";
-                url = "/MM2H/ajaxShareHolderDetail";
+                url = "/ILP/ajaxShareHolderDetail";
 
                 $.ajax({
                     url: url,
@@ -6045,7 +6252,7 @@
 
             var e = document.getElementById("CountryList_");
             var nationality_ = e.options[e.selectedIndex].text;
-            if (nationality_ != "Malaysia") {
+            if (nationality_ != "MALAYSIA") {
 
                 var fileNamePas = document.getElementById("fileNamePasDirector").value;
                 if (fileNamePas == "") {
